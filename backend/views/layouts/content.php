@@ -39,8 +39,7 @@ use dmstr\widgets\Alert;
     <div class="pull-right hidden-xs">
         <b>Version</b> 1.0
     </div>
-    <strong>CIDAE All rights
-    reserved.</strong>
+    <strong>CIDAE All rights</strong>
 </footer>
 
 <!-- Control Sidebar -->

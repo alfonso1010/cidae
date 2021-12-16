@@ -1,6 +1,7 @@
 <?php
 use backend\assets\AppAsset;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
@@ -17,7 +18,7 @@ dmstr\web\AdminLteAsset::register($this);
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
-<body class="login-page">
+<body  background="<?= Url::to('@web/images/cidaeinicio.jpg', true)  ?>" style="background-repeat:no-repeat;background-position:12cm top">
 
 <?php $this->beginBody() ?>
 

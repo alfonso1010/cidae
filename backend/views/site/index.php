@@ -11,7 +11,7 @@ $this->registerCss(<<<CSS
 		transition: 0.3s;
 	}
 	.btn:hover {
-	  background-color: #092f87;
+	  background-color: #CEDE00;
 	  color: white;
 	}
 CSS
@@ -35,7 +35,7 @@ CSS
         	<div class="col-md-3">
                 <div class="box box-solid box-primary btn">
                     <div class="box-body">
-                        <center><img src="<?= Url::to('@web/images/certificado.png', true)  ?>" width="50%" height="40%" alt="estudiante  icono premium" title="estudiante icono premium"></center>
+                        <center><img src="<?= Url::to('@web/images/carreras.png', true)  ?>" width="50%" height="40%" alt="estudiante  icono premium" title="estudiante icono premium"></center>
                     </div><!-- /.box-body -->
                     <div class="box-header">
                         <center><h3 class="box-title ">Administar Carreras</h3></center>
@@ -55,7 +55,7 @@ CSS
             <div class="col-md-3">
                 <div class="box box-solid box-primary btn">
                     <div class="box-body">
-                        <center><img src="<?= Url::to('@web/images/bloc.png', true)  ?>" width="50%" height="40%" alt="docente  icono premium" title="docente icono premium"></center>
+                        <center><img src="<?= Url::to('@web/images/materias.png', true)  ?>" width="50%" height="40%" alt="docente  icono premium" title="docente icono premium"></center>
                     </div><!-- /.box-body -->
                      <div class="box-header">
                         <center><h3 class="box-title">Administrar Materias</h3></center>
@@ -65,7 +65,7 @@ CSS
             <div class="col-md-3">
                 <div class="box box-solid box-primary btn">
                     <div class="box-body">
-                        <center><img src="<?= Url::to('@web/images/estudiante.png', true)  ?>" width="50%" height="40%" alt="estudiante  icono premium" title="estudiante icono premium"></center>
+                        <center><img src="<?= Url::to('@web/images/alumnos.png', true)  ?>" width="50%" height="40%" alt="estudiante  icono premium" title="estudiante icono premium"></center>
                     </div><!-- /.box-body -->
                     <div class="box-header">
                         <center><h3 class="box-title ">Administar Alumnos</h3></center>
@@ -79,7 +79,7 @@ CSS
         	<div class="col-md-3">
                 <div class="box box-solid box-primary btn">
                     <div class="box-body">
-                        <center><img src="<?= Url::to('@web/images/graduado.png', true)  ?>" width="50%" height="40%" alt="docente  icono premium" title="docente icono premium"></center>
+                        <center><img src="<?= Url::to('@web/images/profesores.png', true)  ?>" width="50%" height="40%" alt="docente  icono premium" title="docente icono premium"></center>
                     </div><!-- /.box-body -->
                      <div class="box-header">
                         <center><h3 class="box-title">Administrar Docentes</h3></center>
@@ -89,7 +89,7 @@ CSS
             <div class="col-md-3">
                 <div class="box box-solid box-primary btn">
                     <div class="box-body">
-                        <center><img src="<?= Url::to('@web/images/ensenando.png', true)  ?>" width="50%" height="40%" alt="estudiante  icono premium" title="estudiante icono premium"></center>
+                        <center><img src="<?= Url::to('@web/images/materiasprofesores.png', true)  ?>" width="50%" height="40%" alt="estudiante  icono premium" title="estudiante icono premium"></center>
                     </div><!-- /.box-body -->
                     <div class="box-header">
                         <center><h3 class="box-title ">Materias de Docentes</h3></center>
@@ -99,7 +99,7 @@ CSS
             <div class="col-md-3">
                 <div class="box box-solid box-primary btn">
                     <div class="box-body">
-                        <center><img src="<?= Url::to('@web/images/calendario.png', true)  ?>" width="50%" height="40%" alt="estudiante  icono premium" title="estudiante icono premium"></center>
+                        <center><img src="<?= Url::to('@web/images/horarios.png', true)  ?>" width="50%" height="40%" alt="estudiante  icono premium" title="estudiante icono premium"></center>
                     </div><!-- /.box-body -->
                     <div class="box-header">
                         <center><h3 class="box-title ">Administar Horarios</h3></center>
@@ -109,7 +109,7 @@ CSS
             <div class="col-md-3">
                 <div class="box box-solid box-primary btn">
                     <div class="box-body">
-                        <center><img src="<?= Url::to('@web/images/escritura.png', true)  ?>" width="50%" height="40%" alt="estudiante  icono premium" title="estudiante icono premium"></center>
+                        <center><img src="<?= Url::to('@web/images/calificaciones.png', true)  ?>" width="50%" height="40%" alt="estudiante  icono premium" title="estudiante icono premium"></center>
                     </div><!-- /.box-body -->
                     <div class="box-header">
                         <center><h3 class="box-title ">Calificaciones de Alumnos</h3></center>
