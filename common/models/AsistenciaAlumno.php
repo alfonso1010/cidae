@@ -8,17 +8,17 @@ use Yii;
  * This is the model class for table "asistencia_alumno".
  *
  * @property int $id_asistencia_alumno
- * @property int $id_profesor_materia
- * @property int $id_profesor
- * @property int $id_materia
  * @property int $asistio
  * @property string $fecha_asistencia
  * @property string $hora_asistencia
  * @property string $fecha_alta
  * @property int $id_alumno
+ * @property int $id_materia
+ * @property int $id_profesor
+ * @property string $nombre_materia
+ * @property string $nombre_profesor
  *
  * @property Alumnos $alumno
- * @property ProfesorMateria $profesorMateria
  */
 class AsistenciaAlumno extends \yii\db\ActiveRecord
 {
@@ -36,11 +36,11 @@ class AsistenciaAlumno extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_profesor_materia', 'id_profesor', 'id_materia', 'asistio', 'fecha_asistencia', 'hora_asistencia', 'fecha_alta', 'id_alumno'], 'required'],
-            [['id_profesor_materia', 'id_profesor', 'id_materia', 'asistio', 'id_alumno'], 'integer'],
+            [['asistio', 'fecha_asistencia', 'hora_asistencia', 'fecha_alta', 'id_alumno', 'id_materia', 'id_profesor', 'nombre_materia', 'nombre_profesor'], 'required'],
+            [['asistio', 'id_alumno', 'id_materia', 'id_profesor'], 'integer'],
             [['fecha_asistencia', 'hora_asistencia', 'fecha_alta'], 'safe'],
+            [['nombre_materia', 'nombre_profesor'], 'string', 'max' => 255],
             [['id_alumno'], 'exist', 'skipOnError' => true, 'targetClass' => Alumnos::className(), 'targetAttribute' => ['id_alumno' => 'id_alumno']],
-            [['id_profesor_materia', 'id_profesor', 'id_materia'], 'exist', 'skipOnError' => true, 'targetClass' => ProfesorMateria::className(), 'targetAttribute' => ['id_profesor_materia' => 'id_profesor_materia', 'id_profesor' => 'id_profesor', 'id_materia' => 'id_materia']],
         ];
     }
 
@@ -51,14 +51,15 @@ class AsistenciaAlumno extends \yii\db\ActiveRecord
     {
         return [
             'id_asistencia_alumno' => 'Id Asistencia Alumno',
-            'id_profesor_materia' => 'Id Profesor Materia',
-            'id_profesor' => 'Id Profesor',
-            'id_materia' => 'Id Materia',
             'asistio' => 'Asistio',
             'fecha_asistencia' => 'Fecha Asistencia',
             'hora_asistencia' => 'Hora Asistencia',
             'fecha_alta' => 'Fecha Alta',
             'id_alumno' => 'Id Alumno',
+            'id_materia' => 'Id Materia',
+            'id_profesor' => 'Id Profesor',
+            'nombre_materia' => 'Nombre Materia',
+            'nombre_profesor' => 'Nombre Profesor',
         ];
     }
 
@@ -70,15 +71,5 @@ class AsistenciaAlumno extends \yii\db\ActiveRecord
     public function getAlumno()
     {
         return $this->hasOne(Alumnos::className(), ['id_alumno' => 'id_alumno']);
-    }
-
-    /**
-     * Gets query for [[ProfesorMateria]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getProfesorMateria()
-    {
-        return $this->hasOne(ProfesorMateria::className(), ['id_profesor_materia' => 'id_profesor_materia', 'id_profesor' => 'id_profesor', 'id_materia' => 'id_materia']);
     }
 }
