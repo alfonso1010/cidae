@@ -5,11 +5,9 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "profesor_materia_horarios".
+ * This is the model class for table "horarios_profesor_materia".
  *
  * @property int $id
- * @property int $id_horario
- * @property int $id_grupo
  * @property string $dia_semana
  * @property string $hora_inicio
  * @property string $hora_fin
@@ -17,17 +15,18 @@ use Yii;
  * @property int $id_profesor
  * @property string $nombre_materia
  * @property string $nombre_profesor
+ * @property int $id_grupo
  *
- * @property Horarios $horario
+ * @property Grupos $grupo
  */
-class ProfesorMateriaHorarios extends \yii\db\ActiveRecord
+class HorariosProfesorMateria extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'profesor_materia_horarios';
+        return 'horarios_profesor_materia';
     }
 
     /**
@@ -36,11 +35,11 @@ class ProfesorMateriaHorarios extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_horario', 'id_grupo', 'dia_semana', 'hora_inicio', 'hora_fin', 'id_materia', 'id_profesor', 'nombre_materia', 'nombre_profesor'], 'required'],
-            [['id_horario', 'id_grupo', 'id_materia', 'id_profesor'], 'integer'],
+            [['dia_semana', 'hora_inicio', 'hora_fin', 'id_materia', 'id_profesor', 'nombre_materia', 'nombre_profesor', 'id_grupo'], 'required'],
+            [['id_materia', 'id_profesor', 'id_grupo'], 'integer'],
             [['dia_semana', 'hora_inicio', 'hora_fin'], 'string', 'max' => 45],
             [['nombre_materia', 'nombre_profesor'], 'string', 'max' => 255],
-            [['id_horario', 'id_grupo'], 'exist', 'skipOnError' => true, 'targetClass' => Horarios::className(), 'targetAttribute' => ['id_horario' => 'id_horario', 'id_grupo' => 'id_grupo']],
+            [['id_grupo'], 'exist', 'skipOnError' => true, 'targetClass' => Grupos::className(), 'targetAttribute' => ['id_grupo' => 'id_grupo']],
         ];
     }
 
@@ -51,8 +50,6 @@ class ProfesorMateriaHorarios extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'id_horario' => 'Id Horario',
-            'id_grupo' => 'Id Grupo',
             'dia_semana' => 'Dia Semana',
             'hora_inicio' => 'Hora Inicio',
             'hora_fin' => 'Hora Fin',
@@ -60,16 +57,17 @@ class ProfesorMateriaHorarios extends \yii\db\ActiveRecord
             'id_profesor' => 'Id Profesor',
             'nombre_materia' => 'Nombre Materia',
             'nombre_profesor' => 'Nombre Profesor',
+            'id_grupo' => 'Id Grupo',
         ];
     }
 
     /**
-     * Gets query for [[Horario]].
+     * Gets query for [[Grupo]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getHorario()
+    public function getGrupo()
     {
-        return $this->hasOne(Horarios::className(), ['id_horario' => 'id_horario', 'id_grupo' => 'id_grupo']);
+        return $this->hasOne(Grupos::className(), ['id_grupo' => 'id_grupo']);
     }
 }
