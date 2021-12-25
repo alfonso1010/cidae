@@ -29,12 +29,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
                     [
-                        'attribute' => 'id_materia',
+                        'attribute' => 'id_carrera',
                         'value' => function($model){
                             $carrera = Carreras::findOne($model->id_carrera);
                             return (!is_null($carrera))?$carrera->nombre:"";
                         },
-                        'filter' => Html::activeDropDownList($searchModel, 'id_carrera', ArrayHelper::map(Carreras::find()->asArray()->all(), 'id_carrera', 'nombre'),['class'=>'form-control','prompt' => 'Seleccione Materia']),
+                        'filter' => Html::activeDropDownList($searchModel, 'id_carrera', ArrayHelper::map(Carreras::find()->asArray()->all(), 'id_carrera', 'nombre'),['class'=>'form-control','prompt' => 'Seleccione Carrera']),
                     ],
                     'nombre',
                     'clave',

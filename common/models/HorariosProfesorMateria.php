@@ -35,7 +35,7 @@ class HorariosProfesorMateria extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['dia_semana', 'hora_inicio', 'hora_fin', 'id_materia', 'id_profesor', 'nombre_materia', 'nombre_profesor', 'id_grupo'], 'required'],
+            [['dia_semana', 'hora_inicio', 'hora_fin', 'id_materia', 'id_profesor', 'nombre_materia', 'nombre_profesor', 'id_grupo','semestre'], 'required'],
             [['id_materia', 'id_profesor', 'id_grupo'], 'integer'],
             [['dia_semana', 'hora_inicio', 'hora_fin'], 'string', 'max' => 45],
             [['nombre_materia', 'nombre_profesor'], 'string', 'max' => 255],
@@ -57,6 +57,7 @@ class HorariosProfesorMateria extends \yii\db\ActiveRecord
             'id_profesor' => 'Id Profesor',
             'nombre_materia' => 'Nombre Materia',
             'nombre_profesor' => 'Nombre Profesor',
+            'semestre' => 'Semestre',
             'id_grupo' => 'Id Grupo',
         ];
     }
