@@ -18,7 +18,7 @@ dmstr\web\AdminLteAsset::register($this);
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
-<body  background="<?= Url::to('@web/images/cidaeinicio.jpg', true)  ?>" style="background-repeat:no-repeat;background-position:12cm top">
+<body style="background-color: #092f87">
 
 <?php $this->beginBody() ?>
 

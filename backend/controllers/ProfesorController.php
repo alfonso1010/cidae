@@ -6,6 +6,9 @@ use Yii;
 use common\models\Profesor;
 use common\models\ProfesorMateria;
 use common\models\Materias;
+use common\models\HorariosProfesorMateria;
+use common\models\Carreras;
+use common\models\Grupos;
 use common\models\ProfesorSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -22,14 +25,75 @@ class ProfesorController extends Controller
      */
     public function behaviors()
     {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
+      $behaviors = [];
+
+      $behaviors['access'] = [
+          'class' => \yii\filters\AccessControl::className(),
+          'rules' => [
+              \common\helpers\UtilidadesHelper::behaviorRbac()
+          ],
+      ];
+      $behaviors['verbs'] = [
+          'class' => VerbFilter::className(),
+          'actions' => [
+              'delete' => ['POST'],
+          ],
+      ];
+
+      return $behaviors;
+    }
+
+    /**
+     * Vista del rol profesor.
+     * @return mixed
+     */
+    public function actionPrincipal()
+    {
+      $id_profesor = Yii::$app->user->identity->id_responsable;
+      //obtiene los grupos a los que da materias el profesor
+      $lista_grupos = HorariosProfesorMateria::find()
+        ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo'])
+        ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
+        ->where(['horarios_profesor_materia.id_profesor' => $id_profesor])
+        ->groupBy(['horarios_profesor_materia.id_grupo'])->asArray()->all();
+      $grupos = ArrayHelper::map($lista_grupos, 'id_grupo', 'nombre_grupo');
+        return $this->render('principal', [
+          'grupos' => $grupos
+        ]);
+    }
+
+     /**
+     * Vista del rol profesor.
+     * @return mixed
+     */
+    public function actionBuscasemestre($id)
+    {
+      $semestres_grupo = HorariosProfesorMateria::find()->where(['id_grupo' => $id])->groupBy(['semestre','id_grupo'])->all();
+      if(!empty($semestres_grupo)){
+        echo "<option value=''>Seleccione Semestre ...</option>";
+        foreach ($semestres_grupo as $key => $value) {
+          echo "<option value='".$value->semestre."'> Semestre ".$value->semestre."</option>";
+        }
+      }else{
+        echo "<option value=''> No hay semestres ...</option>";
+      }
+        
+        
+    }
+
+     /**
+     * Vista del rol profesor.
+     * @return mixed
+     */
+    public function actionGrupos()
+    {
+      $id_profesor = Yii::$app->user->identity->id_responsable;
+      //obtiene los grupos a los que da materias el profesor
+      $materia_grupos = HorariosProfesorMateria::find()->where(['id_profesor' => $id_profesor])->groupBy(['id_materia','id_grupo'])->all();
+
+        return $this->render('principal', [
+          'materias_grupos' => $materias_grupos
+        ]);
     }
 
     /**

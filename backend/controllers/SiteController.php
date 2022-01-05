@@ -6,7 +6,8 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
-
+use yii\helpers\ArrayHelper;
+use common\helpers\UtilidadesHelper;
 /**
  * Site controller
  */
@@ -76,7 +77,27 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goHome(); 
+            $roles_usuario = \Yii::$app->authManager->getRolesByUser(
+                Yii::$app->user->getId()
+            );
+            $roles_usuario =  reset($roles_usuario);
+            $rol = ArrayHelper::getValue($roles_usuario, 'name', '');
+            switch ($rol) {
+                case 'admin':
+                    return $this->goHome(); 
+                    break;
+                case 'profesor':
+                    return $this->redirect(["profesor/principal"]);
+                    break;
+                case 'alumno':
+                    return $this->redirect(["alumno/principal"]);
+                    break;
+                default:
+                    Yii::$app->user->logout();
+                    return $this->goHome();
+                    break;
+            }
+            
         } else {
             $model->password = '';
 
