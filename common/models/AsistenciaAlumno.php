@@ -36,7 +36,7 @@ class AsistenciaAlumno extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['asistio', 'fecha_asistencia', 'hora_asistencia', 'fecha_alta', 'id_alumno', 'id_materia', 'id_profesor', 'nombre_materia', 'nombre_profesor'], 'required'],
+            [['asistio', 'fecha_asistencia', 'hora_asistencia', 'fecha_alta', 'id_alumno', 'id_materia', 'id_profesor', 'nombre_materia', 'nombre_profesor','id_grupo','semestre'], 'required'],
             [['asistio', 'id_alumno', 'id_materia', 'id_profesor'], 'integer'],
             [['fecha_asistencia', 'hora_asistencia', 'fecha_alta'], 'safe'],
             [['nombre_materia', 'nombre_profesor'], 'string', 'max' => 255],
@@ -58,6 +58,8 @@ class AsistenciaAlumno extends \yii\db\ActiveRecord
             'id_alumno' => 'Id Alumno',
             'id_materia' => 'Id Materia',
             'id_profesor' => 'Id Profesor',
+            'id_grupo' => 'Id Grupo',
+            'semestre' => 'Semestre',
             'nombre_materia' => 'Nombre Materia',
             'nombre_profesor' => 'Nombre Profesor',
         ];

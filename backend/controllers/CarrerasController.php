@@ -19,15 +19,24 @@ class CarrerasController extends Controller
      */
     public function behaviors()
     {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
+      $behaviors = [];
+
+      $behaviors['access'] = [
+          'class' => \yii\filters\AccessControl::className(),
+          'rules' => [
+              \common\helpers\UtilidadesHelper::behaviorRbac()
+          ],
+      ];
+      $behaviors['verbs'] = [
+          'class' => VerbFilter::className(),
+          'actions' => [
+              'delete' => ['POST'],
+          ],
+      ];
+
+      return $behaviors;
     }
+
 
     /**
      * Lists all Carreras models.

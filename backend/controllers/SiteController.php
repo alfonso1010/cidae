@@ -61,7 +61,27 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+         $roles_usuario = \Yii::$app->authManager->getRolesByUser(
+            Yii::$app->user->getId()
+        );
+        $roles_usuario =  reset($roles_usuario);
+        $rol = ArrayHelper::getValue($roles_usuario, 'name', '');
+        switch ($rol) {
+            case 'admin':
+                return $this->render('index');
+                break;
+            case 'profesor':
+                return $this->redirect(["profesores/principal"]);
+                break;
+            case 'alumno':
+                return $this->redirect(["alumnos/principal"]);
+                break;
+            default:
+                Yii::$app->user->logout();
+                return $this->goHome();
+                break;
+        }
+        
     }
 
     /**
@@ -87,10 +107,10 @@ class SiteController extends Controller
                     return $this->goHome(); 
                     break;
                 case 'profesor':
-                    return $this->redirect(["profesor/principal"]);
+                    return $this->redirect(["profesores/principal"]);
                     break;
                 case 'alumno':
-                    return $this->redirect(["alumno/principal"]);
+                    return $this->redirect(["alumnos/principal"]);
                     break;
                 default:
                     Yii::$app->user->logout();

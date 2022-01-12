@@ -18,5 +18,10 @@ return [
         [
             'class' => 'yii\rbac\DbManager', // or use 'yii\rbac\PhpManager'
         ],
+        'formatter' =>
+        [
+            'dateFormat' => 'medium',
+            'defaultTimeZone' => 'America/Mexico_City',
+        ],
     ],
 ];

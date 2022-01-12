@@ -21,6 +21,8 @@ use Yii;
  */
 class HorariosProfesorMateria extends \yii\db\ActiveRecord
 {
+
+    public $nombre_grupo;
     /**
      * {@inheritdoc}
      */

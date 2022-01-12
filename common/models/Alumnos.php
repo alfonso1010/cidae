@@ -93,6 +93,17 @@ class Alumnos extends \yii\db\ActiveRecord
         ];
     }
 
+     /**
+     * Funcion que concatena el nombre completo del alumno
+     * @return String Nombre completo del cliente
+     */
+    public function getNombreCompleto() {
+        return $this->nombre.' '
+        .$this->apellido_paterno.' '
+        .$this->apellido_materno;
+    }
+
+
     /**
      * Gets query for [[Grupo]].
      *

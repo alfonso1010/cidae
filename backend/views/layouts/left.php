@@ -3,8 +3,10 @@ use yii\helpers\Url;
 use mdm\admin\components\MenuHelper;
 use yii\bootstrap\Nav;
 use yii\widgets\Menu;
+use yii\helpers\ArrayHelper;
 
 $menu = MenuHelper::getAssignedMenu(Yii::$app->user->id);
+
 ?>
 <aside class="main-sidebar">
 
