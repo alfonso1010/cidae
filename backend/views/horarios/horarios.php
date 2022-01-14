@@ -27,11 +27,12 @@ $this->registerJs('
         var id_carrera = $("#id_carrera").val();
         var id_grupo = $("#id_grupo").val();
         var id_semestre = $("#id_semestre").val();
+        var bloque = $("#bloque").val();
         $.ajax({
             type:"POST", 
             async:false,
             url:"'.$url.'",
-            data:{"id_grupo": id_grupo,"id_carrera":id_carrera,"semestre":id_semestre},
+            data:{"id_grupo": id_grupo,"id_carrera":id_carrera,"semestre":id_semestre,"bloque":bloque},
             success:function(data){ 
                 try{
                     if(data.code == 200 ){
@@ -135,6 +136,7 @@ $this->registerJs('
         var id_carrera = $("#id_carrera").val();
         var id_grupo = $("#id_grupo").val();
         var id_semestre = $("#id_semestre").val();
+        var bloque = $("#bloque").val();
         $.ajax({
             type:"POST", 
             async:false,
@@ -143,6 +145,7 @@ $this->registerJs('
                 "id_carrera": id_carrera,
                 "id_grupo": id_grupo,
                 "semestre": id_semestre,
+                "bloque": bloque,
                 "horarios": horarios
             },
             success:function(data){ 
@@ -186,6 +189,9 @@ $this->registerJs('
 
 ', View::POS_END);
 
+$this->registerCss("
+    
+");
 
 
 ?>
@@ -240,6 +246,20 @@ $this->registerJs('
                         "id" => "id_semestre",
                         'class' => "form-control ",
                         'placeholder' => 'Seleccione Grupo ...',
+                    ]);
+                     ?>
+                </div>
+                <div class="col-sm-3">
+                    <label>Seleccione Bloque</label>
+                    <?= // With a model and without ActiveForm
+                    Html::dropDownList('bloque',null,[
+                            "0" => "Seleccione Bloque",
+                            "1" => "Bloque 1",
+                            "2" => "Bloque 2",
+                        ],[
+                        "id" => "bloque",
+                        'class' => "form-control ",
+                        'placeholder' => 'Seleccione Bloque ...',
                         'onChange' => "cargaHorario();"
                     ]);
                      ?>

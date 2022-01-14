@@ -69,13 +69,6 @@ use kartik\widgets\Select2;
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="col-sm-4">
-                        <?= $form->field($model, 'no_evaluaciones_periodo')->textInput() ?>
-                    </div>
-                </div>
-            </div>
             
             <div class="row">
                 <div class="col-xs-12">

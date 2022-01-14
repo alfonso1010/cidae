@@ -44,7 +44,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     'generacion',
                     'modalidad',
-                    'no_evaluaciones_periodo',
                     'fecha_alta',
                 ],
             ]) ?>

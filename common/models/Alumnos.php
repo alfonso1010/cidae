@@ -58,13 +58,20 @@ class Alumnos extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nombre', 'apellido_paterno', 'apellido_materno', 'direccion', 'telefono_celular', 'sexo', 'email', 'matricula', 'id_grupo'], 'required'],
+            [['nombre', 'apellido_paterno', 'apellido_materno', 'direccion', 'telefono_celular', 'sexo', 'email', 'matricula', 'id_grupo','fecha_nacimiento','curp','fecha_ingreso','nombre_contacto_emergencia','telefono_contacto_emergencia','direccion_contacto_emergencia'], 'required'],
             [['direccion'], 'string'],
+            [['curp'], 'string', 'max' => 18],
+            [['curp'], 'string', 'min' => 18],
+            [['telefono_casa'], 'string', 'max' => 10],
+            [['telefono_casa'], 'string', 'min' => 10],
+            [['telefono_celular'], 'string', 'max' => 10],
+            [['telefono_celular'], 'string', 'min' => 10],
+            [['telefono_contacto_emergencia'], 'string', 'max' => 10],
+            [['telefono_contacto_emergencia'], 'string', 'min' => 10],
             [['edad', 'activo', 'id_grupo'], 'integer'],
             [['fecha_alta'], 'safe'],
             [['nombre', 'apellido_paterno'], 'string', 'max' => 60],
-            [['apellido_materno', 'telefono_casa', 'telefono_celular', 'sexo', 'email', 'fecha_nacimiento'], 'string', 'max' => 45],
-            [['matricula'], 'string', 'max' => 200],
+            [['apellido_materno', 'telefono_casa', 'sexo'], 'string', 'max' => 45],
             [['id_grupo'], 'exist', 'skipOnError' => true, 'targetClass' => Grupos::className(), 'targetAttribute' => ['id_grupo' => 'id_grupo']],
         ];
     }
@@ -87,6 +94,11 @@ class Alumnos extends \yii\db\ActiveRecord
             'matricula' => 'Matricula',
             'edad' => 'Edad',
             'fecha_nacimiento' => 'Fecha Nacimiento',
+            'fecha_alta' => 'Fecha Ingreso',
+            'curp' => 'CURP',
+            'nombre_contacto_emergencia' => 'Nombre Contacto Emergencia',
+            'telefono_contacto_emergencia' => 'Teléfono Contacto Emergencia',
+            'direccion_contacto_emergencia' => 'Dirección Contacto Emergencia',
             'fecha_alta' => 'Fecha Alta',
             'activo' => 'Activo',
             'id_grupo' => 'Id Grupo',

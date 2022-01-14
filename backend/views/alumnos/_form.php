@@ -31,31 +31,23 @@ use kartik\widgets\Select2;
                             ],
                         ])->label("Grupo") ?>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="col-sm-4">
+                     <div class="col-sm-4">
                         <?= $form->field($model, 'matricula')->textInput(['maxlength' => true]) ?>
+                    </div>
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'curp')->textInput(['maxlength' => true]) ?>
                     </div>
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-xs-12">
                     <div class="col-sm-4">
                         <?= $form->field($model, 'nombre')->textInput(['maxlength' => true]) ?>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
                     <div class="col-sm-4">
                         <?= $form->field($model, 'apellido_paterno')->textInput(['maxlength' => true]) ?>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
                     <div class="col-sm-4">
                         <?= $form->field($model, 'apellido_materno')->textInput(['maxlength' => true]) ?>
                     </div>
@@ -64,26 +56,21 @@ use kartik\widgets\Select2;
             <div class="row">
                 <div class="col-xs-12">
                     <div class="col-sm-4">
-                        <?= $form->field($model, 'direccion')->textarea(['rows' => 6]) ?>
+                        <?= $form->field($model, 'telefono_celular')->textInput(['maxlength' => true]) ?>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
                     <div class="col-sm-4">
                         <?= $form->field($model, 'telefono_casa')->textInput(['maxlength' => true]) ?>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="col-sm-4">
-                        <?= $form->field($model, 'telefono_celular')->textInput(['maxlength' => true]) ?>
+                     <div class="col-sm-4">
+                        <?= $form->field($model, 'direccion')->textarea(['rows' => 4]) ?>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-xs-12">
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
+                    </div>
                     <div class="col-sm-4">
                         <?= $form->field($model, 'sexo')->dropDownList(
                             ["M" => "Masculino", "F" => "Femenino"],
@@ -93,22 +80,12 @@ use kartik\widgets\Select2;
                             ]);
                         ?>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="col-sm-4">
-                        <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
                     <div class="col-sm-4">
                         <?= $form->field($model, 'edad')->textInput() ?>
                     </div>
                 </div>
             </div>
+           
             <div class="row">
                 <div class="col-xs-12">
                      <div class="col-sm-4 col-md-4 col-lg-4 fecha_nacimiento">
@@ -118,18 +95,51 @@ use kartik\widgets\Select2;
                                 'model'=>$model,
                                 'attribute'=>'fecha_nacimiento',
                                 'type' => DatePicker::TYPE_INPUT,
-                                'value' => '1990-01-01',
                                 'options' => [
                                     'placeholder' => 'Elige Fecha de Nacimiento',
                                     'required' => true,
+                                    'value' => "1995-01-01"
                                 ],
                                 'pluginOptions' => [
                                     'autoclose'=>true,
                                     'format' => 'yyyy-mm-dd',
-                                    'endDate'=> '-18y',
                                 ],
                             ]);
                         ?>
+                    </div>
+                    <div class="col-sm-4 col-md-4 col-lg-4 fecha_ingreso">
+                        <label class="control-label">Fecha Ingreso</label>
+                        <?php
+                            echo DatePicker::widget([
+                                'model'=>$model,
+                                'attribute'=>'fecha_ingreso',
+                                'type' => DatePicker::TYPE_INPUT,
+                                'options' => [
+                                    'placeholder' => 'Seleccione Fecha Ingreso',
+                                    'required' => true,
+                                    'value' => date("Y-m-d")
+                                ],
+                                'pluginOptions' => [
+                                    'autoclose'=>true,
+                                    'format' => 'yyyy-mm-dd',
+                                ],
+                            ]);
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+             <div class="row">
+                <div class="col-xs-12">
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'nombre_contacto_emergencia')->textInput(['maxlength' => true]) ?>
+                    </div>
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'telefono_contacto_emergencia')->textInput(['maxlength' => true]) ?>
+                    </div>
+                     <div class="col-sm-4">
+                        <?= $form->field($model, 'direccion_contacto_emergencia')->textarea(['rows' => 4]) ?>
                     </div>
                 </div>
             </div>

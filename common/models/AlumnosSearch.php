@@ -18,7 +18,7 @@ class AlumnosSearch extends Alumnos
     {
         return [
             [['id_alumno', 'edad', 'activo', 'id_grupo'], 'integer'],
-            [['nombre', 'apellido_paterno', 'apellido_materno', 'direccion', 'telefono_casa', 'telefono_celular', 'sexo', 'email', 'matricula', 'fecha_nacimiento', 'fecha_alta'], 'safe'],
+            [['nombre', 'apellido_paterno', 'apellido_materno', 'direccion', 'telefono_casa', 'telefono_celular', 'sexo', 'email', 'matricula', 'fecha_nacimiento', 'fecha_alta','curp','fecha_ingreso','nombre_contacto_emergencia','telefono_contacto_emergencia','direccion_contacto_emergencia'], 'safe'],
         ];
     }
 
@@ -68,12 +68,12 @@ class AlumnosSearch extends Alumnos
         $query->andFilterWhere(['like', 'nombre', $this->nombre])
             ->andFilterWhere(['like', 'apellido_paterno', $this->apellido_paterno])
             ->andFilterWhere(['like', 'apellido_materno', $this->apellido_materno])
-            ->andFilterWhere(['like', 'direccion', $this->direccion])
-            ->andFilterWhere(['like', 'telefono_casa', $this->telefono_casa])
             ->andFilterWhere(['like', 'telefono_celular', $this->telefono_celular])
             ->andFilterWhere(['like', 'sexo', $this->sexo])
             ->andFilterWhere(['like', 'email', $this->email])
             ->andFilterWhere(['like', 'matricula', $this->matricula])
+            ->andFilterWhere(['like', 'curp', $this->curp])
+            ->andFilterWhere(['like', 'fecha_ingreso', $this->fecha_ingreso])
             ->andFilterWhere(['like', 'fecha_nacimiento', $this->fecha_nacimiento]);
 
         return $dataProvider;

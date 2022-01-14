@@ -56,8 +56,8 @@ class Profesor extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nombre', 'apellido_paterno', 'apellido_materno', 'cedula', 'telefono_celular', 'sexo'], 'required'],
-            [['direccion'], 'string'],
+            [['nombre', 'apellido_paterno', 'apellido_materno', 'cedula', 'telefono_celular', 'sexo','curp','rfc','nss','banco','clabe_interbancaria','grado_academico','email'], 'required'],
+            [['direccion','no_cuenta','no_tarjeta'], 'string'],
             [['fecha_alta'], 'safe'],
             [['activo', 'edad'], 'integer'],
             [['nombre', 'apellido_paterno', 'apellido_materno', 'telefono_celular', 'telefono_casa', 'fecha_nacimiento'], 'string', 'max' => 45],
@@ -86,6 +86,14 @@ class Profesor extends \yii\db\ActiveRecord
             'activo' => 'Activo',
             'edad' => 'Edad',
             'fecha_nacimiento' => 'Fecha Nacimiento',
+            'curp' => 'CURP',
+            'rfc' => 'RFC',
+            'nss' => 'NSS',
+            'banco' => 'BANCO',
+            'no_cuenta' => 'No. Cuenta',
+            'clabe_interbancaria' => 'Clabe Interbancaria',
+            'no_tarjeta' => 'No. tarjeta',
+            'grado_academico' => 'Grado Académico',
         ];
     }
 

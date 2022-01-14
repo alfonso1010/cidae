@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
 
-                    'id_alumno',
+                    
                     [
                         'attribute' => 'id_grupo',
                         'label' => 'Grupo',
@@ -41,13 +41,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'nombre',
                     'apellido_paterno',
                     'apellido_materno',
-                    'edad',
+                    //'edad',
+                    'curp',
                     //'direccion:ntext',
                     //'telefono_casa',
                     'telefono_celular',
                     //'sexo',
                     'email:email',
-                    //'fecha_nacimiento',
+                    'fecha_ingreso',
                     //'fecha_alta',
                     //'activo',
 

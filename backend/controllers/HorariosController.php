@@ -84,7 +84,8 @@ class HorariosController extends Controller
         $id_grupo = ArrayHelper::getValue($datos, 'id_grupo', 0);
         $id_carrera = ArrayHelper::getValue($datos, 'id_carrera', 0);
         $semestre = ArrayHelper::getValue($datos, 'semestre', 0);
-        if($id_carrera > 0 && $id_grupo > 0 && $semestre > 0){
+        $bloque = ArrayHelper::getValue($datos, 'bloque', 0);
+        if($id_carrera > 0 && $id_grupo > 0 && $semestre > 0 && $bloque > 0){
             $profesores = Materias::find()->select(["profesor.id_profesor",'concat(profesor.nombre, " ", profesor.apellido_paterno, " ", profesor.apellido_materno) as nombre_completo',"materias.nombre as nombre_materia","materias.id_materia"])
                 ->innerJoin( 'profesor_materia','materias.id_materia = profesor_materia.id_materia')
                 ->innerJoin( 'profesor','profesor_materia.id_profesor = profesor.id_profesor')
@@ -114,7 +115,7 @@ class HorariosController extends Controller
                             <th>Viernes</th>
                             <th>Sábado</th>
                         </tr>';
-                    for ($i=8; $i < 20; $i++) {
+                    for ($i=7; $i < 19; $i++) {
                         $hora_fin = $i+1; 
                         $tabla .= "
                         <tr>
@@ -133,6 +134,7 @@ class HorariosController extends Controller
                                         'id_profesor' => 0,
                                         'semestre' => $semestre,
                                         'id_grupo' => $id_grupo,
+                                        'bloque' => $bloque,
                                     ]);
                                     if(!is_null($busca_horario_libre)){
                                         $tabla .= "<option selected='true' value='libre'> Hora Libre </option>";
@@ -148,6 +150,7 @@ class HorariosController extends Controller
                                             'id_profesor' => $profesor['id_profesor'],
                                             'semestre' => $semestre,
                                             'id_grupo' => $id_grupo,
+                                            'bloque' => $bloque,
                                         ]);
                                         if(!is_null($busca_horario)){
                                             $tabla .='
@@ -178,6 +181,7 @@ class HorariosController extends Controller
                                         'id_profesor' => 0,
                                         'semestre' => $semestre,
                                         'id_grupo' => $id_grupo,
+                                        'bloque' => $bloque
                                     ]);
                                     if(!is_null($busca_horario_libre)){
                                         $tabla .= "<option selected='true' value='libre'> Hora Libre </option>";
@@ -193,6 +197,7 @@ class HorariosController extends Controller
                                             'id_profesor' => $profesor['id_profesor'],
                                             'semestre' => $semestre,
                                             'id_grupo' => $id_grupo,
+                                            'bloque' => $bloque
                                         ]);
                                         if(!is_null($busca_horario)){
                                             $tabla .='
@@ -223,6 +228,7 @@ class HorariosController extends Controller
                                         'id_profesor' => 0,
                                         'semestre' => $semestre,
                                         'id_grupo' => $id_grupo,
+                                        'bloque' => $bloque
                                     ]);
                                     if(!is_null($busca_horario_libre)){
                                         $tabla .= "<option selected='true' value='libre'> Hora Libre </option>";
@@ -238,6 +244,7 @@ class HorariosController extends Controller
                                             'id_profesor' => $profesor['id_profesor'],
                                             'semestre' => $semestre,
                                             'id_grupo' => $id_grupo,
+                                            'bloque' => $bloque
                                         ]);
                                         if(!is_null($busca_horario)){
                                             $tabla .='
@@ -268,6 +275,7 @@ class HorariosController extends Controller
                                         'id_profesor' => 0,
                                         'semestre' => $semestre,
                                         'id_grupo' => $id_grupo,
+                                        'bloque' => $bloque
                                     ]);
                                     if(!is_null($busca_horario_libre)){
                                         $tabla .= "<option selected='true' value='libre'> Hora Libre </option>";
@@ -283,6 +291,7 @@ class HorariosController extends Controller
                                             'id_profesor' => $profesor['id_profesor'],
                                             'semestre' => $semestre,
                                             'id_grupo' => $id_grupo,
+                                            'bloque' => $bloque
                                         ]);
                                         if(!is_null($busca_horario)){
                                             $tabla .='
@@ -313,6 +322,7 @@ class HorariosController extends Controller
                                         'id_profesor' => 0,
                                         'semestre' => $semestre,
                                         'id_grupo' => $id_grupo,
+                                        'bloque' => $bloque
                                     ]);
                                     if(!is_null($busca_horario_libre)){
                                         $tabla .= "<option selected='true' value='libre'> Hora Libre </option>";
@@ -328,6 +338,7 @@ class HorariosController extends Controller
                                             'id_profesor' => $profesor['id_profesor'],
                                             'semestre' => $semestre,
                                             'id_grupo' => $id_grupo,
+                                            'bloque' => $bloque
                                         ]);
                                         if(!is_null($busca_horario)){
                                             $tabla .='
@@ -358,6 +369,7 @@ class HorariosController extends Controller
                                         'id_profesor' => 0,
                                         'semestre' => $semestre,
                                         'id_grupo' => $id_grupo,
+                                        'bloque' => $bloque
                                     ]);
                                     if(!is_null($busca_horario_libre)){
                                         $tabla .= "<option selected='true' value='libre'> Hora Libre </option>";
@@ -373,6 +385,7 @@ class HorariosController extends Controller
                                             'id_profesor' => $profesor['id_profesor'],
                                             'semestre' => $semestre,
                                             'id_grupo' => $id_grupo,
+                                            'bloque' => $bloque
                                         ]);
                                         if(!is_null($busca_horario)){
                                             $tabla .='
@@ -428,7 +441,8 @@ class HorariosController extends Controller
         $id_carrera = ArrayHelper::getValue($datos, 'id_carrera', 0);
         $id_grupo = ArrayHelper::getValue($datos, 'id_grupo', 0);
         $semestre = ArrayHelper::getValue($datos, 'semestre', 0);
-        if($id_carrera > 0 && $id_grupo > 0 && $semestre > 0){
+        $bloque = ArrayHelper::getValue($datos, 'bloque', 0);
+        if($id_carrera > 0 && $id_grupo > 0 && $semestre > 0 && $bloque > 0 ){
             //print_r($horarios);die();
             foreach ($horarios as $key => $horario) {
                 if($horario['eliminar'] == 1){
@@ -438,6 +452,7 @@ class HorariosController extends Controller
                         'hora_fin' => $horario['hora_fin'],
                         'semestre' => $semestre,
                         'id_grupo' => $id_grupo,
+                        'bloque' => $bloque,
                     ]);
                     if(!is_null($busca_horario)){
                         $busca_horario->delete();
@@ -453,6 +468,7 @@ class HorariosController extends Controller
                         'hora_fin' => $horario['hora_fin'],
                         'semestre' => $semestre,
                         'id_grupo' => $id_grupo,
+                        'bloque' => $bloque,
                     ]);
                     if(!is_null($busca_horario)){
                         $nuevo_horario = $busca_horario;
@@ -467,6 +483,7 @@ class HorariosController extends Controller
                     $nuevo_horario->nombre_materia  = $nombre_materia;
                     $nuevo_horario->nombre_profesor  = $nombre_profesor;
                     $nuevo_horario->semestre  = $semestre;
+                    $nuevo_horario->bloque  = $bloque;
                     $nuevo_horario->id_grupo  = $id_grupo;
                     $nuevo_horario->save(false);
                 }
