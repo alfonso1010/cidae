@@ -1,7 +1,6 @@
 <?php
 
 namespace common\models;
-
 use Yii;
 
 /**
@@ -22,7 +21,15 @@ use Yii;
 class HorariosProfesorMateria extends \yii\db\ActiveRecord
 {
 
+    const DIA_LUNES     = 1;
+    const DIA_MARTES    = 2;
+    const DIA_MIERCOLES = 3;
+    const DIA_JUEVES    = 4;
+    const DIA_VIERNES   = 5;
+    const DIA_SABADO    = 6;
+
     public $nombre_grupo;
+
     /**
      * {@inheritdoc}
      */

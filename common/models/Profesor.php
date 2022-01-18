@@ -63,6 +63,18 @@ class Profesor extends \yii\db\ActiveRecord
             [['nombre', 'apellido_paterno', 'apellido_materno', 'telefono_celular', 'telefono_casa', 'fecha_nacimiento'], 'string', 'max' => 45],
             [['cedula', 'email'], 'string', 'max' => 100],
             [['sexo'], 'string', 'max' => 10],
+            [['curp'], 'string', 'max' => 18],
+            [['curp'], 'string', 'min' => 18],
+            [['rfc'], 'string', 'max' => 13],
+            [['rfc'], 'string', 'min' => 13],
+            [['telefono_casa'], 'string', 'max' => 10],
+            [['telefono_casa'], 'string', 'min' => 10],
+            [['telefono_celular'], 'string', 'max' => 10],
+            [['telefono_celular'], 'string', 'min' => 10],
+            [['telefono_contacto_emergencia'], 'string', 'max' => 10],
+            [['telefono_contacto_emergencia'], 'string', 'min' => 10],
+            [['clabe_interbancaria'], 'string', 'min' => 18],
+            [['clabe_interbancaria'], 'string', 'max' => 18],
         ];
     }
 

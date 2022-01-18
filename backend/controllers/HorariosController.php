@@ -80,7 +80,7 @@ class HorariosController extends Controller
      */
     public function actionCargarhorarios()
     {
-        $datos = Yii::$app->request->post();
+           $datos = Yii::$app->request->post();
         $id_grupo = ArrayHelper::getValue($datos, 'id_grupo', 0);
         $id_carrera = ArrayHelper::getValue($datos, 'id_carrera', 0);
         $semestre = ArrayHelper::getValue($datos, 'semestre', 0);
@@ -90,328 +90,311 @@ class HorariosController extends Controller
                 ->innerJoin( 'profesor_materia','materias.id_materia = profesor_materia.id_materia')
                 ->innerJoin( 'profesor','profesor_materia.id_profesor = profesor.id_profesor')
                 ->where(["materias.id_carrera" => $id_carrera])
+                ->andWhere(["materias.activo" => 0])
+                ->andWhere(["profesor.activo" => 0])
                 ->asArray()->all();
-            if(!empty($profesores)){
-                $select_prof = "
-                    <option value='0'> Seleccione </option>
-                    <option value='libre'> Hora Libre </option>
-                ";
-                foreach ($profesores as $key => $profesor) {
-                    $select_prof .= '
-                    <option value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
-                        '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
-                    </option>
-                   '; 
-                }
-                $tabla = '
-                <table class="table">
-                    <tbody>
-                        <tr>
-                            <th>Hora</th>
-                            <th>Lunes</th>
-                            <th>Martes</th>
-                            <th>Miércoles</th>
-                            <th>Jueves</th>
-                            <th>Viernes</th>
-                            <th>Sábado</th>
-                        </tr>';
-                    for ($i=7; $i < 19; $i++) {
-                        $hora_fin = $i+1; 
-                        $tabla .= "
-                        <tr>
-                            <td width='120px'> 
-                                <b style='color: #092f87' >".$i.":00 - ".$hora_fin.":00</b>
-                            </td>
-                            <td>
-                                <select onChange='seleccionados(1,".$i.",".$hora_fin.",this)' class='form-control'>
-                                    <option value='0'> Seleccione </option>
-                                    ";
-                                    $busca_horario_libre = HorariosProfesorMateria::findOne([
-                                        'dia_semana' => 1,
-                                        'hora_inicio' => $i,
-                                        'hora_fin' => $hora_fin,
-                                        'id_materia' => 0,
-                                        'id_profesor' => 0,
-                                        'semestre' => $semestre,
-                                        'id_grupo' => $id_grupo,
-                                        'bloque' => $bloque,
-                                    ]);
-                                    if(!is_null($busca_horario_libre)){
-                                        $tabla .= "<option selected='true' value='libre'> Hora Libre </option>";
-                                    }else{
-                                        $tabla .= "<option value='libre'> Hora Libre </option>";
-                                    }
-                                    foreach ($profesores as $key => $profesor) {
-                                        $busca_horario = HorariosProfesorMateria::findOne([
-                                            'dia_semana' => 1,
-                                            'hora_inicio' => $i,
-                                            'hora_fin' => $hora_fin,
-                                            'id_materia' => $profesor['id_materia'],
-                                            'id_profesor' => $profesor['id_profesor'],
-                                            'semestre' => $semestre,
-                                            'id_grupo' => $id_grupo,
-                                            'bloque' => $bloque,
-                                        ]);
-                                        if(!is_null($busca_horario)){
-                                            $tabla .='
-                                            <option selected="true" value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
-                                                '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
-                                            </option>
-                                           '; 
-                                        }else{
-                                            $tabla .='
-                                            <option value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
-                                                '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
-                                            </option>
-                                           '; 
-                                        }
-                                    }
-                                    $tabla .= "
-                                </select>
-                            </td>
-                            <td>
-                                <select onChange='seleccionados(2,".$i.",".$hora_fin.",this)' class='form-control'>
-                                    <option value='0'> Seleccione </option>
-                                    ";
-                                    $busca_horario_libre = HorariosProfesorMateria::findOne([
-                                        'dia_semana' => 2,
-                                        'hora_inicio' => $i,
-                                        'hora_fin' => $hora_fin,
-                                        'id_materia' => 0,
-                                        'id_profesor' => 0,
-                                        'semestre' => $semestre,
-                                        'id_grupo' => $id_grupo,
-                                        'bloque' => $bloque
-                                    ]);
-                                    if(!is_null($busca_horario_libre)){
-                                        $tabla .= "<option selected='true' value='libre'> Hora Libre </option>";
-                                    }else{
-                                        $tabla .= "<option value='libre'> Hora Libre </option>";
-                                    }
-                                    foreach ($profesores as $key => $profesor) {
-                                         $busca_horario = HorariosProfesorMateria::findOne([
-                                            'dia_semana' => 2,
-                                            'hora_inicio' => $i,
-                                            'hora_fin' => $hora_fin,
-                                            'id_materia' => $profesor['id_materia'],
-                                            'id_profesor' => $profesor['id_profesor'],
-                                            'semestre' => $semestre,
-                                            'id_grupo' => $id_grupo,
-                                            'bloque' => $bloque
-                                        ]);
-                                        if(!is_null($busca_horario)){
-                                            $tabla .='
-                                            <option selected="true" value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
-                                                '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
-                                            </option>
-                                           '; 
-                                        }else{
-                                            $tabla .='
-                                            <option value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
-                                                '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
-                                            </option>
-                                           '; 
-                                        }
-                                    }
-                                    $tabla .= "
-                                </select>
-                            </td>
-                            <td>
-                                <select onChange='seleccionados(3,".$i.",".$hora_fin.",this)'  class='form-control'>
-                                    <option value='0'> Seleccione </option>
-                                    ";
-                                    $busca_horario_libre = HorariosProfesorMateria::findOne([
-                                        'dia_semana' => 3,
-                                        'hora_inicio' => $i,
-                                        'hora_fin' => $hora_fin,
-                                        'id_materia' => 0,
-                                        'id_profesor' => 0,
-                                        'semestre' => $semestre,
-                                        'id_grupo' => $id_grupo,
-                                        'bloque' => $bloque
-                                    ]);
-                                    if(!is_null($busca_horario_libre)){
-                                        $tabla .= "<option selected='true' value='libre'> Hora Libre </option>";
-                                    }else{
-                                        $tabla .= "<option value='libre'> Hora Libre </option>";
-                                    }
-                                    foreach ($profesores as $key => $profesor) {
-                                         $busca_horario = HorariosProfesorMateria::findOne([
-                                            'dia_semana' => 3,
-                                            'hora_inicio' => $i,
-                                            'hora_fin' => $hora_fin,
-                                            'id_materia' => $profesor['id_materia'],
-                                            'id_profesor' => $profesor['id_profesor'],
-                                            'semestre' => $semestre,
-                                            'id_grupo' => $id_grupo,
-                                            'bloque' => $bloque
-                                        ]);
-                                        if(!is_null($busca_horario)){
-                                            $tabla .='
-                                            <option selected="true" value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
-                                                '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
-                                            </option>
-                                           '; 
-                                        }else{
-                                            $tabla .='
-                                            <option value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
-                                                '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
-                                            </option>
-                                           '; 
-                                        }
-                                    }
-                                    $tabla .= "
-                                </select>
-                            </td>
-                            <td>
-                                <select onChange='seleccionados(4,".$i.",".$hora_fin.",this)' class='form-control'>
-                                    <option value='0'> Seleccione </option>
-                                    ";
-                                    $busca_horario_libre = HorariosProfesorMateria::findOne([
-                                        'dia_semana' => 4,
-                                        'hora_inicio' => $i,
-                                        'hora_fin' => $hora_fin,
-                                        'id_materia' => 0,
-                                        'id_profesor' => 0,
-                                        'semestre' => $semestre,
-                                        'id_grupo' => $id_grupo,
-                                        'bloque' => $bloque
-                                    ]);
-                                    if(!is_null($busca_horario_libre)){
-                                        $tabla .= "<option selected='true' value='libre'> Hora Libre </option>";
-                                    }else{
-                                        $tabla .= "<option value='libre'> Hora Libre </option>";
-                                    }
-                                    foreach ($profesores as $key => $profesor) {
-                                        $busca_horario = HorariosProfesorMateria::findOne([
-                                            'dia_semana' => 4,
-                                            'hora_inicio' => $i,
-                                            'hora_fin' => $hora_fin,
-                                            'id_materia' => $profesor['id_materia'],
-                                            'id_profesor' => $profesor['id_profesor'],
-                                            'semestre' => $semestre,
-                                            'id_grupo' => $id_grupo,
-                                            'bloque' => $bloque
-                                        ]);
-                                        if(!is_null($busca_horario)){
-                                            $tabla .='
-                                            <option selected="true" value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
-                                                '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
-                                            </option>
-                                           '; 
-                                        }else{
-                                            $tabla .='
-                                            <option value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
-                                                '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
-                                            </option>
-                                           '; 
-                                        }
-                                    }
-                                    $tabla .= "
-                                </select>
-                            </td>
-                            <td>
-                                <select onChange='seleccionados(5,".$i.",".$hora_fin.",this)' class='form-control'>
-                                    <option value='0'> Seleccione </option>
-                                    ";
-                                    $busca_horario_libre = HorariosProfesorMateria::findOne([
-                                        'dia_semana' => 5,
-                                        'hora_inicio' => $i,
-                                        'hora_fin' => $hora_fin,
-                                        'id_materia' => 0,
-                                        'id_profesor' => 0,
-                                        'semestre' => $semestre,
-                                        'id_grupo' => $id_grupo,
-                                        'bloque' => $bloque
-                                    ]);
-                                    if(!is_null($busca_horario_libre)){
-                                        $tabla .= "<option selected='true' value='libre'> Hora Libre </option>";
-                                    }else{
-                                        $tabla .= "<option value='libre'> Hora Libre </option>";
-                                    }
-                                    foreach ($profesores as $key => $profesor) {
-                                        $busca_horario = HorariosProfesorMateria::findOne([
-                                            'dia_semana' => 5,
-                                            'hora_inicio' => $i,
-                                            'hora_fin' => $hora_fin,
-                                            'id_materia' => $profesor['id_materia'],
-                                            'id_profesor' => $profesor['id_profesor'],
-                                            'semestre' => $semestre,
-                                            'id_grupo' => $id_grupo,
-                                            'bloque' => $bloque
-                                        ]);
-                                        if(!is_null($busca_horario)){
-                                            $tabla .='
-                                            <option selected="true" value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
-                                                '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
-                                            </option>
-                                           '; 
-                                        }else{
-                                            $tabla .='
-                                            <option value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
-                                                '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
-                                            </option>
-                                           '; 
-                                        }
-                                    }
-                                    $tabla .= "
-                                </select>
-                            </td>
-                            <td>
-                                <select onChange='seleccionados(6,".$i.",".$hora_fin.",this)' class='form-control'>
-                                    <option value='0'> Seleccione </option>
-                                    ";
-                                    $busca_horario_libre = HorariosProfesorMateria::findOne([
-                                        'dia_semana' => 6,
-                                        'hora_inicio' => $i,
-                                        'hora_fin' => $hora_fin,
-                                        'id_materia' => 0,
-                                        'id_profesor' => 0,
-                                        'semestre' => $semestre,
-                                        'id_grupo' => $id_grupo,
-                                        'bloque' => $bloque
-                                    ]);
-                                    if(!is_null($busca_horario_libre)){
-                                        $tabla .= "<option selected='true' value='libre'> Hora Libre </option>";
-                                    }else{
-                                        $tabla .= "<option value='libre'> Hora Libre </option>";
-                                    }
-                                    foreach ($profesores as $key => $profesor) {
-                                         $busca_horario = HorariosProfesorMateria::findOne([
-                                            'dia_semana' => 6,
-                                            'hora_inicio' => $i,
-                                            'hora_fin' => $hora_fin,
-                                            'id_materia' => $profesor['id_materia'],
-                                            'id_profesor' => $profesor['id_profesor'],
-                                            'semestre' => $semestre,
-                                            'id_grupo' => $id_grupo,
-                                            'bloque' => $bloque
-                                        ]);
-                                        if(!is_null($busca_horario)){
-                                            $tabla .='
-                                            <option selected="true" value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
-                                                '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
-                                            </option>
-                                           '; 
-                                        }else{
-                                            $tabla .='
-                                            <option value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
-                                                '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
-                                            </option>
-                                           '; 
-                                        }
-                                    }
-                                    $tabla .= "
-                                </select>
-                            </td>
-                          
-                        </tr>
-                        ";                    
+            $grupo = Grupos::findOne($id_grupo);
+            if(!empty($profesores) && !is_null($grupo) ){
+                if($grupo->modalidad == "Escolarizado"){
+                    $select_prof = "
+                        <option value='0'> Seleccione </option>
+                    ";
+                    foreach ($profesores as $key => $profesor) {
+                        $select_prof .= '
+                        <option value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
+                            '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
+                        </option>
+                       '; 
                     }
-                    
-                $tabla .= "
-                    </tbody>
-                </table>";
+                    $tabla = '
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th>Hora</th>
+                                <th>Lunes</th>
+                                <th>Martes</th>
+                                <th>Miércoles</th>
+                                <th>Jueves</th>
+                                <th>Viernes</th>
+                            </tr>';
+                        $hora_inicio = "07:00"; 
+                        for ($i=1; $i < 4; $i++) {
+                            if($i == 2){
+                                $suma_hora = strtotime ( '+30 minute' , strtotime ($hora_inicio) ) ;
+                            }else{
+                                $suma_hora = strtotime ( '+2 hour' , strtotime ($hora_inicio) ) ; 
+                            }
+                            $hora_fin = date ('H:i', $suma_hora); 
+                            $tabla .= "
+                            <tr>
+                                <td width='120px'> 
+                                    <b style='color: #092f87' >".$hora_inicio." - ".$hora_fin."</b>
+                                </td>
+                                <td >
+                                    <select onChange='seleccionados(1,\"".$hora_inicio."\",\"".$hora_fin."\",this)' class='form-control'>
+                                        <option value='0'> Seleccione </option>
+                                        ";
+                                        if($i == 2){
+                                            $tabla .= "<option selected='true' value='libre'> RECESO </option>";
+                                        }else{
+                                            foreach ($profesores as $key => $profesor) {
+                                                $busca_horario = HorariosProfesorMateria::findOne([
+                                                    'dia_semana' => 1,
+                                                    'hora_inicio' => $hora_inicio,
+                                                    'hora_fin' => $hora_fin,
+                                                    'id_materia' => $profesor['id_materia'],
+                                                    'id_profesor' => $profesor['id_profesor'],
+                                                    'semestre' => $semestre,
+                                                    'id_grupo' => $id_grupo,
+                                                    'bloque' => $bloque,
+                                                ]);
+                                                if(!is_null($busca_horario)){
+                                                    $tabla .='
+                                                    <option selected="true" value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
+                                                        '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
+                                                    </option>
+                                                   '; 
+                                                }else{
+                                                    $tabla .='
+                                                    <option value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
+                                                        '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
+                                                    </option>
+                                                   '; 
+                                                }
+                                            }
+                                        }
+                                        $tabla .= "
+                                    </select>
+                                </td>
+                                 <td>
+                                    <select onChange='seleccionados(2,\"".$hora_inicio."\",\"".$hora_fin."\",this)' class='form-control'>
+                                        <option value='0'> Seleccione </option>
+                                        ";
+                                        if($i == 2){
+                                            $tabla .= "<option selected='true' value='libre'> RECESO </option>";
+                                        }else{
+                                            foreach ($profesores as $key => $profesor) {
+                                                $busca_horario = HorariosProfesorMateria::findOne([
+                                                    'dia_semana' => 2,
+                                                    'hora_inicio' => $hora_inicio,
+                                                    'hora_fin' => $hora_fin,
+                                                    'id_materia' => $profesor['id_materia'],
+                                                    'id_profesor' => $profesor['id_profesor'],
+                                                    'semestre' => $semestre,
+                                                    'id_grupo' => $id_grupo,
+                                                    'bloque' => $bloque,
+                                                ]);
+                                                if(!is_null($busca_horario)){
+                                                    $tabla .='
+                                                    <option selected="true" value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
+                                                        '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
+                                                    </option>
+                                                   '; 
+                                                }else{
+                                                    $tabla .='
+                                                    <option value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
+                                                        '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
+                                                    </option>
+                                                   '; 
+                                                }
+                                            }
+                                        }
+                                        $tabla .= "
+                                    </select>
+                                </td>
+                                 <td>
+                                    <select onChange='seleccionados(3,\"".$hora_inicio."\",\"".$hora_fin."\",this)' class='form-control'>
+                                        <option value='0'> Seleccione </option>
+                                        ";
+                                        if($i == 2){
+                                            $tabla .= "<option selected='true' value='libre'> RECESO </option>";
+                                        }else{
+                                            foreach ($profesores as $key => $profesor) {
+                                                $busca_horario = HorariosProfesorMateria::findOne([
+                                                    'dia_semana' => 3,
+                                                    'hora_inicio' => $hora_inicio,
+                                                    'hora_fin' => $hora_fin,
+                                                    'id_materia' => $profesor['id_materia'],
+                                                    'id_profesor' => $profesor['id_profesor'],
+                                                    'semestre' => $semestre,
+                                                    'id_grupo' => $id_grupo,
+                                                    'bloque' => $bloque,
+                                                ]);
+                                                if(!is_null($busca_horario)){
+                                                    $tabla .='
+                                                    <option selected="true" value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
+                                                        '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
+                                                    </option>
+                                                   '; 
+                                                }else{
+                                                    $tabla .='
+                                                    <option value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
+                                                        '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
+                                                    </option>
+                                                   '; 
+                                                }
+                                            }
+                                        }
+                                        $tabla .= "
+                                    </select>
+                                </td>
+                                 <td>
+                                    <select onChange='seleccionados(4,\"".$hora_inicio."\",\"".$hora_fin."\",this)' class='form-control'>
+                                        <option value='0'> Seleccione </option>
+                                        ";
+                                        if($i == 2){
+                                            $tabla .= "<option selected='true' value='libre'> RECESO </option>";
+                                        }else{
+                                            foreach ($profesores as $key => $profesor) {
+                                                $busca_horario = HorariosProfesorMateria::findOne([
+                                                    'dia_semana' => 4,
+                                                    'hora_inicio' => $hora_inicio,
+                                                    'hora_fin' => $hora_fin,
+                                                    'id_materia' => $profesor['id_materia'],
+                                                    'id_profesor' => $profesor['id_profesor'],
+                                                    'semestre' => $semestre,
+                                                    'id_grupo' => $id_grupo,
+                                                    'bloque' => $bloque,
+                                                ]);
+                                                if(!is_null($busca_horario)){
+                                                    $tabla .='
+                                                    <option selected="true" value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
+                                                        '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
+                                                    </option>
+                                                   '; 
+                                                }else{
+                                                    $tabla .='
+                                                    <option value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
+                                                        '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
+                                                    </option>
+                                                   '; 
+                                                }
+                                            }
+                                        }
+                                        $tabla .= "
+                                    </select>
+                                </td>
+                                 <td>
+                                    <select onChange='seleccionados(5,\"".$hora_inicio."\",\"".$hora_fin."\",this)' class='form-control'>
+                                        <option value='0'> Seleccione </option>
+                                        ";
+                                        if($i == 2){
+                                            $tabla .= "<option selected='true' value='libre'> RECESO </option>";
+                                        }else{
+                                            foreach ($profesores as $key => $profesor) {
+                                                $busca_horario = HorariosProfesorMateria::findOne([
+                                                    'dia_semana' => 5,
+                                                    'hora_inicio' => $hora_inicio,
+                                                    'hora_fin' => $hora_fin,
+                                                    'id_materia' => $profesor['id_materia'],
+                                                    'id_profesor' => $profesor['id_profesor'],
+                                                    'semestre' => $semestre,
+                                                    'id_grupo' => $id_grupo,
+                                                    'bloque' => $bloque,
+                                                ]);
+                                                if(!is_null($busca_horario)){
+                                                    $tabla .='
+                                                    <option selected="true" value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
+                                                        '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
+                                                    </option>
+                                                   '; 
+                                                }else{
+                                                    $tabla .='
+                                                    <option value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
+                                                        '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
+                                                    </option>
+                                                   '; 
+                                                }
+                                            }
+                                        }
+                                        $tabla .= "
+                                    </select>
+                                </td>
+                            </tr>
+                            ";    
+                            $hora_inicio = $hora_fin;                 
+                        }
+                        
+                    $tabla .= "
+                        </tbody>
+                    </table>";
+                }else if($grupo->modalidad == "Sabatino"){
+                     $select_prof = "
+                        <option value='0'> Seleccione </option>
+                    ";
+                    foreach ($profesores as $key => $profesor) {
+                        $select_prof .= '
+                        <option value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
+                            '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
+                        </option>
+                       '; 
+                    }
+                    $tabla = '
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th>Hora</th>
+                                <th>Sábado</th>
+                            </tr>';
+                        $hora_inicio = "08:00"; 
+                        for ($i=1; $i < 7; $i++) {
+                            if($i == 2 | $i == 5){
+                                $suma_hora = strtotime ( '+30 minute' , strtotime ($hora_inicio) ) ;
+                            }else{
+                                $suma_hora = strtotime ( '+2 hour 30 minute' , strtotime ($hora_inicio) ) ; 
+                            }
+                            $hora_fin = date ('H:i', $suma_hora); 
+                            $tabla .= "
+                            <tr>
+                                <td width='120px'> 
+                                    <b style='color: #092f87' >".$hora_inicio." - ".$hora_fin."</b>
+                                </td>
+                                <td >
+                                    <select onChange='seleccionados(6,\"".$hora_inicio."\",\"".$hora_fin."\",this)' class='form-control'>
+                                        <option value='0'> Seleccione </option>
+                                        ";
+                                        if($i == 2 | $i == 5){
+                                            $tabla .= "<option selected='true' value='libre'> RECESO </option>";
+                                        }else{
+                                            foreach ($profesores as $key => $profesor) {
+                                                $busca_horario = HorariosProfesorMateria::findOne([
+                                                    'dia_semana' => 6,
+                                                    'hora_inicio' => $hora_inicio,
+                                                    'hora_fin' => $hora_fin,
+                                                    'id_materia' => $profesor['id_materia'],
+                                                    'id_profesor' => $profesor['id_profesor'],
+                                                    'semestre' => $semestre,
+                                                    'id_grupo' => $id_grupo,
+                                                    'bloque' => $bloque,
+                                                ]);
+                                                if(!is_null($busca_horario)){
+                                                    $tabla .='
+                                                    <option selected="true" value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
+                                                        '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
+                                                    </option>
+                                                   '; 
+                                                }else{
+                                                    $tabla .='
+                                                    <option value="'.$profesor['id_profesor'].'-'.$profesor['id_materia'].'"> 
+                                                        '.$profesor['nombre_completo'].' - '.$profesor['nombre_materia'].'
+                                                    </option>
+                                                   '; 
+                                                }
+                                            }
+                                        }
+                                        $tabla .= "
+                                    </select>
+                                </td>
+                            </tr>
+                            ";    
+                            $hora_inicio = $hora_fin;                 
+                        }
+                        
+                    $tabla .= "
+                        </tbody>
+                    </table>";
+                }
+                
                 $data = [
                     "code" => 200,
                     "tabla" => $tabla,
@@ -503,5 +486,18 @@ class HorariosController extends Controller
         return json_encode($data);
     }
 
-   
+     /**
+     * @inheritdoc
+     */
+    public function diasSemena() {
+        $dias = [
+            1 => 'Lunes',
+            2 => 'Martes',
+            3 => 'Miércoles',
+            4 => 'Jueves',
+            5 => 'Viernes',
+            6 => 'Sábado'
+        ];
+        return $dias;
+    }
 }

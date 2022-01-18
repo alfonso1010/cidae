@@ -14,6 +14,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
+use common\models\User;
 
 /**
  * ProfesorController implements the CRUD actions for Profesor model.
@@ -82,6 +83,31 @@ class ProfesorController extends Controller
         $model = new Profesor();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            $user_profesor = new User();
+            $user_profesor->username = $model->email;
+            $user_profesor->email = $model->email;
+            $user_profesor->status = User::STATUS_ACTIVE;
+            $user_profesor->id_responsable = $model->id_profesor;
+            $user_profesor->tipo_responsable = 1;
+            $user_profesor->setPassword($model->cedula);
+            $user_profesor->generateAuthKey();
+            $user_profesor->generatePasswordResetToken();
+            
+            if($user_profesor->save()){
+                //asigna rol
+                User::asignaRol($user_profesor->id,"profesor");
+            }else{
+                //print_r($user_profesor->getFirstErrors());die();
+                $model->delete();
+                Yii::$app->session->setFlash(
+                    'danger',
+                    'No se pudo crear el profesor, Contacte con el administrador.'
+                );
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
+            }
             return $this->redirect(['view', 'id' => $model->id_profesor]);
         }
 
@@ -102,6 +128,11 @@ class ProfesorController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+             $user_profesor = User::findOne(['id_responsable' => $model->id_profesor,'tipo_responsable' => 1]);
+            if(!is_null($user_profesor)){
+                $user_profesor->setPassword($model->cedula);
+                $user_profesor->save();
+            }
             return $this->redirect(['view', 'id' => $model->id_profesor]);
         }
 
@@ -125,6 +156,7 @@ class ProfesorController extends Controller
         $materias_asignadas = ProfesorMateria::find()->select(['materias.id_materia','materias.nombre'])
                                 ->innerJoin( 'materias','profesor_materia.id_materia = materias.id_materia')
                                 ->where(["profesor_materia.id_profesor" => $id])
+                                ->andWhere(['materias.activo' => 0])
                                 ->asArray()->all();
         $materias_disponibles = Materias::find()->select(["id_materia","nombre"])->where(['activo' => 0])->asArray()->all();
         if(!empty($materias_asignadas)){

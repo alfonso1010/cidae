@@ -30,12 +30,12 @@ $fieldOptions2 = [
         <p class="login-box-msg"  style="font-size: 25px;color: #252525">Iniciar<b style="color:#a5b200"> Sesión</b></p>
 
         <?php $form = ActiveForm::begin(['id' => 'login-form', 'enableClientValidation' => false]); ?>
-        <label style="color: #092F87">Usuario</label>
+        <label style="color: #092F87">Email</label>
         <?= $form
             ->field($model, 'username', $fieldOptions1)
             ->label(false)
             ->textInput(['placeholder' => $model->getAttributeLabel('username')]) ?>
-        <label  style="color: #092F87">Password</label>
+        <label  style="color: #092F87">Contraseña</label>
         <?= $form
             ->field($model, 'password', $fieldOptions2)
             ->label(false)

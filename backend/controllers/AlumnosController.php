@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Alumnos;
+use common\models\User;
 use common\models\AlumnosSearch;
 use common\models\Grupos;
 use yii\web\Controller;
@@ -81,6 +82,33 @@ class AlumnosController extends Controller
         $grupos = ArrayHelper::map($lista_grupos, 'id_grupo', 'nombre');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            //guarda  usuario de alumno
+            
+            $user_alumno = new User();
+            $user_alumno->username = $model->email;
+            $user_alumno->email = $model->email;
+            $user_alumno->status = User::STATUS_ACTIVE;
+            $user_alumno->id_responsable = $model->id_alumno;
+            $user_alumno->tipo_responsable = 2;
+            $user_alumno->setPassword($model->matricula);
+            $user_alumno->generateAuthKey();
+            $user_alumno->generatePasswordResetToken();
+            
+            if($user_alumno->save()){
+                //asigna rol
+                User::asignaRol($user_alumno->id,"alumno");
+            }else{
+                //print_r($user_alumno->getFirstErrors());die();
+                $model->delete();
+                Yii::$app->session->setFlash(
+                    'danger',
+                    'No se pudo crear el alumno, Contacte con el administrador.'
+                );
+                return $this->render('create', [
+                    'model' => $model,
+                    'grupos' => $grupos,
+                ]);
+            }
             return $this->redirect(['view', 'id' => $model->id_alumno]);
         }
 
@@ -105,6 +133,11 @@ class AlumnosController extends Controller
         $grupos = ArrayHelper::map($lista_grupos, 'id_grupo', 'nombre');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $user_alumno = User::findOne(['id_responsable' => $model->id_alumno,'tipo_responsable' => 2]);
+            if(!is_null($user_alumno)){
+                $user_alumno->setPassword($model->matricula);
+                $user_alumno->save();
+            }
             return $this->redirect(['view', 'id' => $model->id_alumno]);
         }
 

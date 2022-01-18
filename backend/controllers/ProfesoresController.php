@@ -58,6 +58,7 @@ class ProfesoresController extends Controller
         ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo'])
         ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
         ->where(['horarios_profesor_materia.id_profesor' => $id_profesor])
+        ->andWhere(['grupos.activo' => 0])
         ->groupBy(['horarios_profesor_materia.id_grupo'])->asArray()->all();
       $grupos = "";
       foreach ($lista_grupos as $key => $grupo) {
@@ -83,11 +84,29 @@ class ProfesoresController extends Controller
         ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo'])
         ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
         ->where(['horarios_profesor_materia.id_profesor' => $id_profesor])
+        ->andWhere(['grupos.activo' => 0])
         ->groupBy(['horarios_profesor_materia.id_grupo'])->asArray()->all();
 
       $grupos = ArrayHelper::map($lista_grupos, 'id_grupo', 'nombre_grupo');
       
       return $this->render('asistencia', [
+        'grupos' => $grupos
+      ]);
+    }
+
+     public function actionCalificaciones(){
+      $id_profesor = Yii::$app->user->identity->id_responsable;
+      //obtiene los grupos a los que da materias el profesor
+      $lista_grupos = HorariosProfesorMateria::find()
+        ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo'])
+        ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
+        ->where(['horarios_profesor_materia.id_profesor' => $id_profesor])
+        ->andWhere(['grupos.activo' => 0])
+        ->groupBy(['horarios_profesor_materia.id_grupo'])->asArray()->all();
+
+      $grupos = ArrayHelper::map($lista_grupos, 'id_grupo', 'nombre_grupo');
+      
+      return $this->render('calificaciones', [
         'grupos' => $grupos
       ]);
     }
@@ -129,7 +148,7 @@ class ProfesoresController extends Controller
                     <th style="border:1px solid #252525;color:#092F87">Nombre Alumno</th>
                     <th style="border:1px solid #252525;color:#092F87">Asistencia</th>
                 </tr>';
-      $busca_alumnos = Alumnos::findAll(["id_grupo" => $id_grupo]);
+      $busca_alumnos = Alumnos::findAll(["id_grupo" => $id_grupo,'activo' => 0]);
       if(!empty($busca_alumnos)){
         foreach ($busca_alumnos as $key => $alumno) {
           $alumnos .= 
@@ -169,18 +188,20 @@ class ProfesoresController extends Controller
       $id_grupo = ArrayHelper::getValue($datos, 'id_grupo', 0);
       $id_materia = ArrayHelper::getValue($datos, 'id_materia', 0);
       $semestre = ArrayHelper::getValue($datos, 'semestre', 0);
+      $bloque = ArrayHelper::getValue($datos, 'bloque', 0);
       $asistencia = ArrayHelper::getValue($datos, 'asistencia', []);
       $id_profesor = Yii::$app->user->identity->id_responsable;
       $busca_materia = Materias::findOne($id_materia);
       $busca_profesor = Profesor::findOne($id_profesor);
       
-      if(!empty($asistencia) && !is_null($busca_materia) && !is_null($busca_profesor) && $semestre > 0  ){
+      if(!empty($asistencia) && !is_null($busca_materia) && !is_null($busca_profesor) && $semestre > 0 && $bloque > 0  ){
         $busca_asistencia = AsistenciaAlumno::findAll([
           'fecha_asistencia' => Yii::$app->formatter->asDate('now', 'php:Y-m-d'),
           'id_materia' => $id_materia,
           'id_profesor' => $id_profesor,
           'id_grupo' => $id_grupo,
-          'semestre' => $semestre
+          'semestre' => $semestre,
+          'bloque' => $bloque,
         ]);
         if(!empty($busca_asistencia)){
           $data = [
@@ -199,6 +220,7 @@ class ProfesoresController extends Controller
             $guarda_asistencia->id_profesor = $id_profesor;
             $guarda_asistencia->id_grupo = $id_grupo;
             $guarda_asistencia->semestre = $semestre;
+            $guarda_asistencia->bloque = $bloque;
             $guarda_asistencia->nombre_materia = $busca_materia->nombre;
             $guarda_asistencia->nombre_profesor = $busca_profesor->nombreCompleto;
             $guarda_asistencia->save(false);
@@ -211,7 +233,7 @@ class ProfesoresController extends Controller
       }else{
         $data = [
             "code" => 422,
-            "mensaje" => "Ocurrió un error al guardar la asistencia, verifique que grupo, materia y semestre sean válidos.",
+            "mensaje" => "Ocurrió un error al guardar la asistencia, verifique que grupo, materia, semestre y blouqe sean válidos.",
         ];
       }
       
@@ -228,8 +250,11 @@ class ProfesoresController extends Controller
       $lista_materias = HorariosProfesorMateria::find()
       ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo'])
       ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
+      ->innerJoin( 'materias','horarios_profesor_materia.id_materia = materias.id_materia')
       ->where(['horarios_profesor_materia.id_profesor' => $id_profesor])
       ->andWhere(['horarios_profesor_materia.id_grupo' => $id])
+      ->andWhere(['grupos.activo' => 0])
+      ->andWhere(['materias.activo' => 0])
       ->groupBy(['horarios_profesor_materia.id_materia'])->asArray()->all();
       if(!empty($lista_materias)){
           echo "<option value=''> Seleccione Materia ...</option>";
@@ -290,211 +315,284 @@ class ProfesoresController extends Controller
       $id_profesor = Yii::$app->user->identity->id_responsable;
       $semestre = ArrayHelper::getValue($datos, 'semestre', 0);
       $generacion = ArrayHelper::getValue($datos, 'generacion', 0);
-      if($semestre > 0){
-        $tabla = '
-        <table class="table">
-            <tbody>
-                <tr >
-                    <th style="border:1px solid #252525;">Hora</th>
-                    <th style="border:1px solid #252525;">Lunes</th>
-                    <th style="border:1px solid #252525;">Martes</th>
-                    <th style="border:1px solid #252525;">Miércoles</th>
-                    <th style="border:1px solid #252525;">Jueves</th>
-                    <th style="border:1px solid #252525;">Viernes</th>
-                    <th style="border:1px solid #252525;">Sábado</th>
-                </tr>';
-            for ($i=8; $i < 20; $i++) {
-                $hora_fin = $i+1; 
+      $bloque = ArrayHelper::getValue($datos, 'bloque', 0);
+      if($semestre > 0 && $generacion > 0 && $bloque > 0){
+        $busca_dias_horario = HorariosProfesorMateria::find()
+          ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo','grupos.generacion'])
+          ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
+          ->where([
+            'horarios_profesor_materia.id_profesor' => $id_profesor,
+            'horarios_profesor_materia.semestre' => $semestre,
+            'horarios_profesor_materia.bloque' => $bloque,
+            'grupos.generacion' => $generacion,
+          ])
+          ->groupBy(['horarios_profesor_materia.dia_semana'])
+          ->asArray()->all();
+        $horario_escolarizado = false;
+        $horario_sabatino = false;
+        foreach ($busca_dias_horario as $key => $dias_horario) {
+          if($dias_horario['dia_semana'] == 6){
+            $horario_sabatino = true;
+          }else{
+            $horario_escolarizado = true;
+          }
+        }
+        $tabla = "";
+        if($horario_escolarizado){
+          $tabla .= '
+          <table class="table">
+              <tbody>
+                  <tr >
+                      <th style="border:1px solid #252525;">Hora</th>
+                      <th style="border:1px solid #252525;">Lunes</th>
+                      <th style="border:1px solid #252525;">Martes</th>
+                      <th style="border:1px solid #252525;">Miércoles</th>
+                      <th style="border:1px solid #252525;">Jueves</th>
+                      <th style="border:1px solid #252525;">Viernes</th>
+                  </tr>';
+              $hora_inicio = "07:00"; 
+              for ($i=1; $i < 4; $i++) {
+                  if($i == 2){
+                      $suma_hora = strtotime ( '+30 minute' , strtotime ($hora_inicio) ) ;
+                  }else{
+                      $suma_hora = strtotime ( '+2 hour' , strtotime ($hora_inicio) ) ; 
+                  }
+                  $hora_fin = date ('H:i', $suma_hora); 
 
-                if($i%2 == 0){
-                  $tabla .= "<tr style='background-color:white'>";
-                }else{
-                  $tabla .= "<tr style='background-color:#c2c2c2'>";
-                }
-                $tabla .= "<td  style='white-space: nowrap;border:1px solid #252525;'> 
-                        <b style='color: #092f87' >".$i.":00 - ".$hora_fin.":00</b>
-                    </td>
-                    <td style='white-space: nowrap;border:1px solid #252525;'>";
-                      $busca_horario = HorariosProfesorMateria::find()
-                      ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo','grupos.generacion'])
-                      ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
-                      ->where([
-                        'horarios_profesor_materia.dia_semana' => 1,
-                        'horarios_profesor_materia.hora_inicio' => $i,
-                        'horarios_profesor_materia.hora_fin' => $hora_fin,
-                        'horarios_profesor_materia.id_profesor' => $id_profesor,
-                        'horarios_profesor_materia.semestre' => $semestre,
-                        'grupos.generacion' => $generacion,
-                      ])->asArray()->all();
-                      if(!empty($busca_horario)){
-                        foreach ($busca_horario as $key => $horario) {
-                          $tabla .= '
-                          <div style="margin:7px;width: min-contentmargin:7px;;border:1px solid #092F87; border-radius: 10px;box-shadow: 0px 10px 10px -6px black;padding: 5px;">
-                            <p>
-                              <b style="color:#092f87">Grupo:</b> <b style="color:black">'.$horario['nombre_grupo'].'</b>
-                            </p>
-                            <p>
-                              <b style="color:#092f87">Materia:</b> <b style="color:black">'.$horario['nombre_materia'].'</b>
-                            </p>
-                          </div>';
+                  if($i%2 == 0){
+                    $tabla .= "<tr style='background-color:white'>";
+                  }else{
+                    $tabla .= "<tr style='background-color:#c2c2c2'>";
+                  }
+                  $tabla .= "
+                      <td  style='white-space: nowrap;border:1px solid #252525;'> 
+                          <b style='color: #092f87' >".$hora_inicio." - ".$hora_fin."</b>
+                      </td>
+                      <td style='white-space: nowrap;border:1px solid #252525;'>";
+                        $busca_horario = HorariosProfesorMateria::find()
+                        ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo','grupos.generacion'])
+                        ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
+                        ->where([
+                          'horarios_profesor_materia.dia_semana' => 1,
+                          'horarios_profesor_materia.hora_inicio' => $hora_inicio,
+                          'horarios_profesor_materia.hora_fin' => $hora_fin,
+                          'horarios_profesor_materia.id_profesor' => $id_profesor,
+                          'horarios_profesor_materia.semestre' => $semestre,
+                          'horarios_profesor_materia.bloque' => $bloque,
+                          'grupos.generacion' => $generacion,
+                        ])->asArray()->all();
+                        if(!empty($busca_horario)){
+                          foreach ($busca_horario as $key => $horario) {
+                            $tabla .= '
+                            <div style="margin:7px;width: min-contentmargin:7px;;border:1px solid #092F87; border-radius: 10px;box-shadow: 0px 10px 10px -6px black;padding: 5px;">
+                              <p>
+                                <b style="color:#092f87">Grupo:</b> <b style="color:black">'.$horario['nombre_grupo'].'</b>
+                              </p>
+                              <p>
+                                <b style="color:#092f87">Materia:</b> <b style="color:black">'.$horario['nombre_materia'].'</b>
+                              </p>
+                            </div>';
+                          }
+                        }else{
+                            $tabla .='RECESO'; 
                         }
-                      }else{
-                          $tabla .='N/A'; 
-                      }
-                    $tabla .= "
-                    </td>
-                    <td style='white-space: nowrap;border:1px solid #252525;'>";
-                      $busca_horario = HorariosProfesorMateria::find()
-                      ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo','grupos.generacion'])
-                      ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
-                      ->where([
-                        'horarios_profesor_materia.dia_semana' => 2,
-                        'horarios_profesor_materia.hora_inicio' => $i,
-                        'horarios_profesor_materia.hora_fin' => $hora_fin,
-                        'horarios_profesor_materia.id_profesor' => $id_profesor,
-                        'horarios_profesor_materia.semestre' => $semestre,
-                        'grupos.generacion' => $generacion,
-                      ])->asArray()->all();
-                      if(!empty($busca_horario)){
-                        foreach ($busca_horario as $key => $horario) {
-                          $tabla .= '
-                          <div style="margin:7px;width: min-content;border:1px solid #092F87; border-radius: 10px;box-shadow: 0px 10px 10px -6px black;padding: 5px;">
-                            <p>
-                              <b style="color:#092f87">Grupo:</b> <b style="color:black">'.$horario['nombre_grupo'].'</b>
-                            </p>
-                            <p>
-                              <b style="color:#092f87">Materia:</b> <b style="color:black">'.$horario['nombre_materia'].'</b>
-                            </p>
-                          </div>';
+                      $tabla .= "
+                      </td>
+                      <td style='white-space: nowrap;border:1px solid #252525;'>";
+                        $busca_horario = HorariosProfesorMateria::find()
+                        ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo','grupos.generacion'])
+                        ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
+                        ->where([
+                          'horarios_profesor_materia.dia_semana' => 2,
+                          'horarios_profesor_materia.hora_inicio' => $hora_inicio,
+                          'horarios_profesor_materia.hora_fin' => $hora_fin,
+                          'horarios_profesor_materia.id_profesor' => $id_profesor,
+                          'horarios_profesor_materia.bloque' => $bloque,
+                          'horarios_profesor_materia.semestre' => $semestre,
+                          'grupos.generacion' => $generacion,
+                        ])->asArray()->all();
+                        if(!empty($busca_horario)){
+                          foreach ($busca_horario as $key => $horario) {
+                            $tabla .= '
+                            <div style="margin:7px;width: min-contentmargin:7px;;border:1px solid #092F87; border-radius: 10px;box-shadow: 0px 10px 10px -6px black;padding: 5px;">
+                              <p>
+                                <b style="color:#092f87">Grupo:</b> <b style="color:black">'.$horario['nombre_grupo'].'</b>
+                              </p>
+                              <p>
+                                <b style="color:#092f87">Materia:</b> <b style="color:black">'.$horario['nombre_materia'].'</b>
+                              </p>
+                            </div>';
+                          }
+                        }else{
+                            $tabla .='RECESO'; 
                         }
-                      }else{
-                          $tabla .='N/A'; 
-                      }
-                            $tabla .= "
-                    </td>
-                    <td style='white-space: nowrap;border:1px solid #252525;'>";
-                     $busca_horario = HorariosProfesorMateria::find()
-                      ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo','grupos.generacion'])
-                      ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
-                      ->where([
-                        'horarios_profesor_materia.dia_semana' => 3,
-                        'horarios_profesor_materia.hora_inicio' => $i,
-                        'horarios_profesor_materia.hora_fin' => $hora_fin,
-                        'horarios_profesor_materia.id_profesor' => $id_profesor,
-                        'horarios_profesor_materia.semestre' => $semestre,
-                        'grupos.generacion' => $generacion,
-                      ])->asArray()->all();
-                      if(!empty($busca_horario)){
-                        foreach ($busca_horario as $key => $horario) {
-                          $tabla .= '
-                          <div style="margin:7px;width: min-content;border:1px solid #092F87; border-radius: 10px;box-shadow: 0px 10px 10px -6px black;padding: 5px;">
-                            <p>
-                              <b style="color:#092f87">Grupo:</b> <b style="color:black">'.$horario['nombre_grupo'].'</b>
-                            </p>
-                            <p>
-                              <b style="color:#092f87">Materia:</b> <b style="color:black">'.$horario['nombre_materia'].'</b>
-                            </p>
-                          </div>';
+                      $tabla .= "
+                      </td>
+                      <td style='white-space: nowrap;border:1px solid #252525;'>";
+                        $busca_horario = HorariosProfesorMateria::find()
+                        ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo','grupos.generacion'])
+                        ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
+                        ->where([
+                          'horarios_profesor_materia.dia_semana' => 3,
+                          'horarios_profesor_materia.hora_inicio' => $hora_inicio,
+                          'horarios_profesor_materia.hora_fin' => $hora_fin,
+                          'horarios_profesor_materia.id_profesor' => $id_profesor,
+                          'horarios_profesor_materia.semestre' => $semestre,
+                          'horarios_profesor_materia.bloque' => $bloque,
+                          'grupos.generacion' => $generacion,
+                        ])->asArray()->all();
+                        if(!empty($busca_horario)){
+                          foreach ($busca_horario as $key => $horario) {
+                            $tabla .= '
+                            <div style="margin:7px;width: min-contentmargin:7px;;border:1px solid #092F87; border-radius: 10px;box-shadow: 0px 10px 10px -6px black;padding: 5px;">
+                              <p>
+                                <b style="color:#092f87">Grupo:</b> <b style="color:black">'.$horario['nombre_grupo'].'</b>
+                              </p>
+                              <p>
+                                <b style="color:#092f87">Materia:</b> <b style="color:black">'.$horario['nombre_materia'].'</b>
+                              </p>
+                            </div>';
+                          }
+                        }else{
+                            $tabla .='RECESO'; 
                         }
-                      }else{
-                          $tabla .='N/A'; 
-                      }
-                            $tabla .= "
-                    </td>
-                    <td style='white-space: nowrap;border:1px solid #252525;'>";
-                      $busca_horario = HorariosProfesorMateria::find()
-                      ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo','grupos.generacion'])
-                      ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
-                      ->where([
-                        'horarios_profesor_materia.dia_semana' => 4,
-                        'horarios_profesor_materia.hora_inicio' => $i,
-                        'horarios_profesor_materia.hora_fin' => $hora_fin,
-                        'horarios_profesor_materia.id_profesor' => $id_profesor,
-                        'horarios_profesor_materia.semestre' => $semestre,
-                        'grupos.generacion' => $generacion,
-                      ])->asArray()->all();
-                      if(!empty($busca_horario)){
-                        foreach ($busca_horario as $key => $horario) {
-                          $tabla .= '
-                          <div style="margin:7px;width: min-content;border:1px solid #092F87; border-radius: 10px;box-shadow: 0px 10px 10px -6px black;padding: 5px;">
-                            <p>
-                              <b style="color:#092f87">Grupo:</b> <b style="color:black">'.$horario['nombre_grupo'].'</b>
-                            </p>
-                            <p>
-                              <b style="color:#092f87">Materia:</b> <b style="color:black">'.$horario['nombre_materia'].'</b>
-                            </p>
-                          </div>';
+                      $tabla .= "
+                      </td>
+                      <td style='white-space: nowrap;border:1px solid #252525;'>";
+                        $busca_horario = HorariosProfesorMateria::find()
+                        ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo','grupos.generacion'])
+                        ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
+                        ->where([
+                          'horarios_profesor_materia.dia_semana' => 4,
+                          'horarios_profesor_materia.hora_inicio' => $hora_inicio,
+                          'horarios_profesor_materia.hora_fin' => $hora_fin,
+                          'horarios_profesor_materia.id_profesor' => $id_profesor,
+                          'horarios_profesor_materia.semestre' => $semestre,
+                          'horarios_profesor_materia.bloque' => $bloque,
+                          'grupos.generacion' => $generacion,
+                        ])->asArray()->all();
+                        if(!empty($busca_horario)){
+                          foreach ($busca_horario as $key => $horario) {
+                            $tabla .= '
+                            <div style="margin:7px;width: min-contentmargin:7px;;border:1px solid #092F87; border-radius: 10px;box-shadow: 0px 10px 10px -6px black;padding: 5px;">
+                              <p>
+                                <b style="color:#092f87">Grupo:</b> <b style="color:black">'.$horario['nombre_grupo'].'</b>
+                              </p>
+                              <p>
+                                <b style="color:#092f87">Materia:</b> <b style="color:black">'.$horario['nombre_materia'].'</b>
+                              </p>
+                            </div>';
+                          }
+                        }else{
+                            $tabla .='RECESO'; 
                         }
-                      }else{
-                          $tabla .='N/A'; 
-                      }
-                            $tabla .= "
-                    </td>
-                    <td style='white-space: nowrap;border:1px solid #252525;'>";
-                      $busca_horario = HorariosProfesorMateria::find()
-                      ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo','grupos.generacion'])
-                      ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
-                      ->where([
-                        'horarios_profesor_materia.dia_semana' => 5,
-                        'horarios_profesor_materia.hora_inicio' => $i,
-                        'horarios_profesor_materia.hora_fin' => $hora_fin,
-                        'horarios_profesor_materia.id_profesor' => $id_profesor,
-                        'horarios_profesor_materia.semestre' => $semestre,
-                        'grupos.generacion' => $generacion,
-                      ])->asArray()->all();
-                      if(!empty($busca_horario)){
-                        foreach ($busca_horario as $key => $horario) {
-                          $tabla .= '
-                          <div style="margin:7px;width: min-content;border:1px solid #092F87; border-radius: 10px;box-shadow: 0px 10px 10px -6px black;padding: 5px;">
-                            <p>
-                              <b style="color:#092f87">Grupo:</b> <b style="color:black">'.$horario['nombre_grupo'].'</b>
-                            </p>
-                            <p>
-                              <b style="color:#092f87">Materia:</b> <b style="color:black">'.$horario['nombre_materia'].'</b>
-                            </p>
-                          </div>';
+                      $tabla .= "
+                      </td>
+                      <td style='white-space: nowrap;border:1px solid #252525;'>";
+                        $busca_horario = HorariosProfesorMateria::find()
+                        ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo','grupos.generacion'])
+                        ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
+                        ->where([
+                          'horarios_profesor_materia.dia_semana' => 5,
+                          'horarios_profesor_materia.hora_inicio' => $hora_inicio,
+                          'horarios_profesor_materia.hora_fin' => $hora_fin,
+                          'horarios_profesor_materia.id_profesor' => $id_profesor,
+                          'horarios_profesor_materia.semestre' => $semestre,
+                          'horarios_profesor_materia.bloque' => $bloque,
+                          'grupos.generacion' => $generacion,
+                        ])->asArray()->all();
+                        if(!empty($busca_horario)){
+                          foreach ($busca_horario as $key => $horario) {
+                            $tabla .= '
+                            <div style="margin:7px;width: min-contentmargin:7px;;border:1px solid #092F87; border-radius: 10px;box-shadow: 0px 10px 10px -6px black;padding: 5px;">
+                              <p>
+                                <b style="color:#092f87">Grupo:</b> <b style="color:black">'.$horario['nombre_grupo'].'</b>
+                              </p>
+                              <p>
+                                <b style="color:#092f87">Materia:</b> <b style="color:black">'.$horario['nombre_materia'].'</b>
+                              </p>
+                            </div>';
+                          }
+                        }else{
+                            $tabla .='RECESO'; 
                         }
-                      }else{
-                          $tabla .='N/A'; 
-                      }
-                            $tabla .= "
-                    </td>
-                    <td style='white-space: nowrap;border:1px solid #252525;'>";
-                      $busca_horario = HorariosProfesorMateria::find()
-                      ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo','grupos.generacion'])
-                      ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
-                      ->where([
-                        'horarios_profesor_materia.dia_semana' => 6,
-                        'horarios_profesor_materia.hora_inicio' => $i,
-                        'horarios_profesor_materia.hora_fin' => $hora_fin,
-                        'horarios_profesor_materia.id_profesor' => $id_profesor,
-                        'horarios_profesor_materia.semestre' => $semestre,
-                        'grupos.generacion' => $generacion,
-                      ])->asArray()->all();
-                      if(!empty($busca_horario)){
-                        foreach ($busca_horario as $key => $horario) {
-                          $tabla .= '
-                          <div style="margin:7px;width: min-content;border:1px solid #092F87; border-radius: 10px;box-shadow: 0px 10px 10px -6px black;padding: 5px;">
-                            <p>
-                              <b style="color:#092f87">Grupo:</b> <b style="color:black">'.$horario['nombre_grupo'].'</b>
-                            </p>
-                            <p>
-                              <b style="color:#092f87">Materia:</b> <b style="color:black">'.$horario['nombre_materia'].'</b>
-                            </p>
-                          </div>';
+                      $tabla .= "
+                      </td>
+                  </tr>
+                  ";   
+                $hora_inicio = $hora_fin;                  
+              }
+              
+          $tabla .= "
+              </tbody>
+          </table>";
+        }
+        if($horario_sabatino){
+           $tabla .= '<h4> Horario Sabatino </h4>
+          <table class="table">
+              <tbody>
+                  <tr >
+                      <th style="border:1px solid #252525;">Hora</th>
+                      <th style="border:1px solid #252525;">Sábado</th>
+                  </tr>';
+              $hora_inicio = "08:00"; 
+              for ($i=1; $i < 7; $i++) {
+                  if($i == 2 | $i == 5){
+                      $suma_hora = strtotime ( '+30 minute' , strtotime ($hora_inicio) ) ;
+                  }else{
+                      $suma_hora = strtotime ( '+2 hour 30 minute' , strtotime ($hora_inicio) ) ; 
+                  }
+                  $hora_fin = date ('H:i', $suma_hora); 
+
+                  if($i%2 == 0){
+                    $tabla .= "<tr style='background-color:white'>";
+                  }else{
+                    $tabla .= "<tr style='background-color:#c2c2c2'>";
+                  }
+                  $tabla .= "
+                      <td  style='white-space: nowrap;border:1px solid #252525;'> 
+                          <b style='color: #092f87' >".$hora_inicio." - ".$hora_fin."</b>
+                      </td>
+                      <td style='white-space: nowrap;border:1px solid #252525;'>";
+                        $busca_horario = HorariosProfesorMateria::find()
+                        ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo','grupos.generacion'])
+                        ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
+                        ->where([
+                          'horarios_profesor_materia.dia_semana' => 6,
+                          'horarios_profesor_materia.hora_inicio' => $hora_inicio,
+                          'horarios_profesor_materia.hora_fin' => $hora_fin,
+                          'horarios_profesor_materia.id_profesor' => $id_profesor,
+                          'horarios_profesor_materia.semestre' => $semestre,
+                          'horarios_profesor_materia.bloque' => $bloque,
+                          'grupos.generacion' => $generacion,
+                        ])->asArray()->all();
+                        if(!empty($busca_horario)){
+                          foreach ($busca_horario as $key => $horario) {
+                            $tabla .= '
+                            <div style="margin:7px;width: min-contentmargin:7px;;border:1px solid #092F87; border-radius: 10px;box-shadow: 0px 10px 10px -6px black;padding: 5px;">
+                              <p>
+                                <b style="color:#092f87">Grupo:</b> <b style="color:black">'.$horario['nombre_grupo'].'</b>
+                              </p>
+                              <p>
+                                <b style="color:#092f87">Materia:</b> <b style="color:black">'.$horario['nombre_materia'].'</b>
+                              </p>
+                            </div>';
+                          }
+                        }else{
+                            $tabla .='RECESO'; 
                         }
-                      }else{
-                          $tabla .='N/A'; 
-                      }
-                            $tabla .= "
-                    </td>
-                </tr>
-                ";                    
-            }
-            
-        $tabla .= "
-            </tbody>
-        </table>";
+                      $tabla .= "
+                      </td>
+                  </tr>
+                  ";   
+                $hora_inicio = $hora_fin;                  
+              }
+              
+          $tabla .= "
+              </tbody>
+          </table>";
+        }
+        
         $data = [
             "code" => 200,
             "tabla" => $tabla,

@@ -10,11 +10,11 @@ use kartik\widgets\Select2;
 /* @var $searchModel common\models\ProfesorSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Registro de Asistencia';
+$this->title = 'Registro de Calificaciones';
 $this->params['breadcrumbs'][] = $this->title;
 
-$url =Url::to(['profesores/cargaralumnos']);
-$url_guarda =Url::to(['profesores/guardarasistencia']);
+$url =Url::to(['profesores/cargaralumnoscal']);
+$url_guarda =Url::to(['profesores/guardarcalificaciones']);
 
 $this->registerCss('
     table tr:hover {
@@ -62,7 +62,7 @@ $this->registerJs('
         });
     }
 
-    function guardarAsistencia(){
+    function guardarCalificacion(){
         var data_envio = [];
         var id_grupo = $("#id_grupo").val();
         var id_materia = $("#id_materia").val();
@@ -135,7 +135,7 @@ $this->registerJs('
         <div class="row">
             <div class="col-xs-12">
                 <div class="col-sm-8">
-                    <h4><b style="color: #092f87">Para tomar asisteencia seleccione Grupo, materia, semestre y bloque</b></h4><br>
+                    <h4><b style="color: #092f87">Para capturar Calificaciones seleccione Grupo, materia, semestre y bloque</b></h4><br>
                 </div>
             </div>
         </div>

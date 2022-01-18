@@ -20,12 +20,13 @@ $this->registerJs('
     function cargaHorario(){
         var generacion = $("#generacion").val();
         var semestre = $("#id_semestre").val();
+        var bloque = $("#bloque").val();
         $("#carga_horario").html("<div class=\'loading\'><img src=\'https://www.jose-aguilar.com/scripts/jquery/loading/images/loader.gif\' alt=\'loading\' /><br/>Un momento, por favor...</div>");
         $.ajax({
             type:"GET", 
             async:false,
             url:"'.$url.'",
-            data:{"semestre": semestre, "generacion": generacion },
+            data:{"semestre": semestre, "generacion": generacion, "bloque":bloque },
             success:function(data){ 
                 try{
                     if(data.code == 200 ){
@@ -38,7 +39,7 @@ $this->registerJs('
                     .setting({
                         "label":"Cerrar",
                          "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor, por favor inténtelo mas tarde</h4>",
-                            "onok": function(){ location.reload();}
+                            //"onok": function(){ location.reload();}
                     }).show();
                 }
             },
@@ -48,7 +49,7 @@ $this->registerJs('
                 .setting({
                     "label":"Cerrar",
                      "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor, por favor inténtelo mas tarde</h4>",
-                        "onok": function(){ location.reload();}
+                        //"onok": function(){ location.reload();}
                 }).show();
             },
             dataType: "json",
@@ -106,10 +107,24 @@ $this->registerJs('
                         ],
                         'options' => [
                             'placeholder' => 'Seleccione Semestre ...',
-                             'onchange'=> 'cargaHorario()',
                         ],
                         'pluginOptions' => [
                         ],
+                    ]);
+                     ?>
+                </div>
+                <div class="col-sm-3">
+                    <label>Seleccione Bloque</label>
+                    <?= // With a model and without ActiveForm
+                    Html::dropDownList('bloque',null,[
+                            "0" => "Seleccione Bloque",
+                            "1" => "Bloque 1",
+                            "2" => "Bloque 2",
+                        ],[
+                        "id" => "bloque",
+                        'class' => "form-control ",
+                        'placeholder' => 'Seleccione Bloque ...',
+                        'onChange' => "cargaHorario();"
                     ]);
                      ?>
                 </div>
