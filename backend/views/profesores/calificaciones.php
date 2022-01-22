@@ -23,16 +23,24 @@ $this->registerCss('
 ');
 
 $this->registerJs('
-    
+
+
     function cargaAlumnos(){
         var id_grupo = $("#id_grupo").val();
         var id_materia = $("#id_materia").val();
+        var semestre = $("#id_semestre").val();
+        var bloque = $("#bloque").val();
         $("#carga_alumnos").html("<div class=\'loading\'><img src=\'https://www.jose-aguilar.com/scripts/jquery/loading/images/loader.gif\' alt=\'loading\' /><br/>Un momento, por favor...</div>");
         $.ajax({
             type:"GET", 
             async:false,
             url:"'.$url.'",
-            data:{"id_grupo": id_grupo, "id_materia": id_materia },
+            data:{
+                "id_grupo": id_grupo, 
+                "id_materia": id_materia,
+                "semestre": semestre,
+                "bloque": bloque,
+            },
             success:function(data){ 
                 try{
                     if(data.code == 200 ){
@@ -45,7 +53,7 @@ $this->registerJs('
                     .setting({
                         "label":"Cerrar",
                          "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor, por favor inténtelo mas tarde</h4>",
-                            "onok": function(){ location.reload();}
+                            //"onok": function(){ location.reload();}
                     }).show();
                 }
             },
@@ -55,7 +63,7 @@ $this->registerJs('
                 .setting({
                     "label":"Cerrar",
                      "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor, por favor inténtelo mas tarde</h4>",
-                        "onok": function(){ location.reload();}
+                        //"onok": function(){ location.reload();}
                 }).show();
             },
             dataType: "json",
@@ -68,11 +76,13 @@ $this->registerJs('
         var id_materia = $("#id_materia").val();
         var semestre = $("#id_semestre").val();
         var bloque = $("#bloque").val();
-        $("input:radio:checked").each(function() {
-            data_envio.push({
-                "id_alumno":$(this).attr("name"),
-                "asistio":$(this).val()
-            });
+        $("input").each(function() {
+            if($(this).attr("id") != undefined && $(this).prop("disabled") == false){
+                data_envio.push({
+                    "id_alumno":$(this).attr("id"),
+                    "calificacion":$(this).val(),
+                });
+            }
         });
         $.ajax({
             type:"POST", 
@@ -83,7 +93,7 @@ $this->registerJs('
                 "id_materia": id_materia,  
                 "semestre": semestre, 
                 "bloque": bloque, 
-                "asistencia":data_envio 
+                "calificaciones":data_envio 
             },
             success:function(data){ 
                 try{
@@ -91,8 +101,8 @@ $this->registerJs('
                         alertify.alert()
                         .setting({
                             "label":"Cerrar",
-                            "message":"<h3 style=\'color:green\' ><b>Éxito.</b></h3><h4>La asistencia de los alumnos, se ha guardado correctamente</h4>",
-                            "onok": function(){ location.reload();}
+                            "message":"<h3 style=\'color:green\' ><b>Éxito.</b></h3><h4>La calificación de los alumnos, se ha guardado correctamente</h4>",
+                            //"onok": function(){ location.reload();}
                         }).show();
                     }else if(data.code == 422 ){
                         alertify.alert()
@@ -106,7 +116,7 @@ $this->registerJs('
                     .setting({
                         "label":"Cerrar",
                          "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor, por favor contacte al administrador</h4>",
-                            "onok": function(){ location.reload();}
+                            //"onok": function(){ location.reload();}
                     }).show();
                 }
             },
@@ -115,14 +125,27 @@ $this->registerJs('
                 .setting({
                     "label":"Cerrar",
                      "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor,por favor contacte al administrador</h4>",
-                        "onok": function(){ location.reload();}
+                        //"onok": function(){ location.reload();}
                 }).show();
             },
             dataType: "json",
         });
         console.log(data_envio);
     }   
+
+    function confirmarRegistro(){
+        alertify.confirm("¿Está Seguro?", "<h3 style=\'color:brown;\'>Una vez que registre las calificaciones ya no podrá modificarlas</h3>", 
+        function(){ 
+            console.log("de acuerdo");
+        },function(){
+            console.log("cancelado");
+        }).set({labels:{ok:"Estoy de acuerdo", cancel: "Cancelar"}});;
+
+    }
    
+    function registrarCalificaciones(){
+
+    }
 
 ', View::POS_END);
 

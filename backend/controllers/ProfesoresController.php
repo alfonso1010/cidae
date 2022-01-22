@@ -7,6 +7,7 @@ use common\models\Profesor;
 use common\models\ProfesorMateria;
 use common\models\Materias;
 use common\models\AsistenciaAlumno;
+use common\models\CalificacionAlumno;
 use common\models\HorariosProfesorMateria;
 use common\models\Carreras;
 use common\models\Alumnos;
@@ -141,7 +142,7 @@ class ProfesoresController extends Controller
       $id_profesor = Yii::$app->user->identity->id_responsable;
       
       $alumnos = '
-      <form action="'.Url::to(['profesores/tomarasistencia']).'" method="post">
+      <form  method="post">
         <table class="table">
             <tbody>
                 <tr >
@@ -180,6 +181,201 @@ class ProfesoresController extends Controller
             "alumnos" => $alumnos,
             "mensaje" => "Éxito",
         ];
+      return json_encode($data);
+    }
+
+    public function actionCargaralumnoscal(){
+      $datos = Yii::$app->request->get();
+      $id_grupo = ArrayHelper::getValue($datos, 'id_grupo', 0);
+      $id_materia = ArrayHelper::getValue($datos, 'id_materia', 0);
+      $semestre = ArrayHelper::getValue($datos, 'semestre', 0);
+      $bloque = ArrayHelper::getValue($datos, 'bloque', 0);
+
+      $id_profesor = Yii::$app->user->identity->id_responsable;
+      
+      $alumnos = '
+      <form method="post">
+        <table class="table">
+            <tbody>
+                <tr >
+                    <th style="border:1px solid #252525;color:#092F87">Matrícula</th>
+                    <th style="border:1px solid #252525;color:#092F87">Nombre Alumno</th>
+                    <th style="border:1px solid #252525;color:#092F87">Cal. Primer Parcial</th>
+                    <th style="border:1px solid #252525;color:#092F87">Cal. Segundo Parcial</th>
+                    <th style="border:1px solid #252525;color:#092F87">Promedio</th>
+                </tr>';
+      $busca_alumnos = Alumnos::findAll(["id_grupo" => $id_grupo,'activo' => 0]);
+      if(!empty($busca_alumnos)){
+        foreach ($busca_alumnos as $key => $alumno) {
+          $busca_primer_calificacion_alumno = CalificacionAlumno::findOne([
+            'id_alumno' => $alumno->id_alumno,
+            'id_materia' => $id_materia,
+            'id_grupo' => $id_grupo,
+            'id_profesor' => $id_profesor,
+            'semestre' => $semestre,
+            'bloque' => $bloque,
+            'no_evaluacion' => 1
+          ]);
+
+          $busca_segunda_calificacion_alumno = CalificacionAlumno::findOne([
+            'id_alumno' => $alumno->id_alumno,
+            'id_materia' => $id_materia,
+            'id_grupo' => $id_grupo,
+            'id_profesor' => $id_profesor,
+            'semestre' => $semestre,
+            'bloque' => $bloque,
+            'no_evaluacion' => 2
+          ]);
+
+          if(is_null($busca_primer_calificacion_alumno)){
+            $input_primera = "<input type='number' id='1-".$alumno->id_alumno."'  min='5' max='10'>";
+            $input_segunda = "-";
+          }else{
+            if($busca_primer_calificacion_alumno->campo_editable == 1){
+              if(!is_null($busca_primer_calificacion_alumno)){
+                $disabled = ($busca_primer_calificacion_alumno->campo_editable)==1?"disabled":"";
+                $input_primera = "<input type='number' value='".$busca_primer_calificacion_alumno->calificacion."' ".$disabled." id='1-".$alumno->id_alumno."'  min='0' max='10'>";
+              }else{
+                $input_primera = "<input type='number' id='1-".$alumno->id_alumno."'  min='5' max='10'>";
+              }
+              if (!is_null($busca_segunda_calificacion_alumno)) {
+                $disabled = ($busca_segunda_calificacion_alumno->campo_editable)==1?"disabled":"";
+                $input_segunda = "<input type='number' value='".$busca_segunda_calificacion_alumno->calificacion."' ".$disabled." id='2-".$alumno->id_alumno."'  min='0' max='10'>";
+              }else{
+                $input_segunda = "<input type='number' id='2-".$alumno->id_alumno."'  min='5' max='10'>";
+              }
+            }else{
+              $disabled = ($busca_primer_calificacion_alumno->campo_editable)==1?"disabled":"";
+              $input_primera = "<input type='number' value='".$busca_primer_calificacion_alumno->calificacion."' ".$disabled." id='1-".$alumno->id_alumno."'  min='0' max='10'>";
+              $input_segunda = "-";
+            }
+          }
+
+          $promedio = "-";
+          if(!is_null($busca_primer_calificacion_alumno) && !is_null($busca_segunda_calificacion_alumno)){
+            $promedio = ($busca_primer_calificacion_alumno->calificacion+$busca_segunda_calificacion_alumno->calificacion)/2;
+            $promedio = floor($promedio);
+            $promedio = number_format($promedio, 2, '.', '');
+          }
+          $alumnos .= 
+          "<tr>
+            <td  style='white-space: nowrap;border:1px solid #252525;'> 
+              <b style='color: #252525;' >".$alumno->matricula."</b>
+            </td>
+            <td width='35%' style='white-space: nowrap;border:1px solid #252525;'> 
+              <b style='color: #252525;' >".$alumno->nombreCompleto."</b>
+            </td>
+            <td  style='white-space: nowrap;border:1px solid #252525;'> 
+               ".$input_primera."
+            </td>
+            <td  style='white-space: nowrap;border:1px solid #252525;'> 
+               ".$input_segunda."
+            </td>
+            <td  style='white-space: nowrap;border:1px solid #252525;'> 
+               <p> ".$promedio."</p>
+            </td>
+          </tr>
+          ";
+        }
+      }
+      $alumnos .= 
+          "<tr>
+            <td style='background-color:white' colspan='2'> 
+              <br><center><button type='button' onclick='guardarCalificacion()' class='btn btn-success'> Guardar Calificaciones </button></center>
+            </td>
+            <td style='background-color:white' colspan='2'> 
+              <br><center><button type='button' onclick='confirmarRegistro()' class='btn btn-warning'> Registrar Calificaciones </button></center>
+            </td>
+          </tr>
+          </tbody>
+      </table>
+      </form>
+      ";
+      $data = [
+            "code" => 200,
+            "alumnos" => $alumnos,
+            "mensaje" => "Éxito",
+        ];
+      return json_encode($data);
+    }
+
+
+     public function actionGuardarcalificaciones(){
+      $datos = Yii::$app->request->post();
+      $id_grupo = ArrayHelper::getValue($datos, 'id_grupo', 0);
+      $id_materia = ArrayHelper::getValue($datos, 'id_materia', 0);
+      $semestre = ArrayHelper::getValue($datos, 'semestre', 0);
+      $bloque = ArrayHelper::getValue($datos, 'bloque', 0);
+      $calificaciones = ArrayHelper::getValue($datos, 'calificaciones', []);
+      $id_profesor = Yii::$app->user->identity->id_responsable;
+      $busca_materia = Materias::findOne($id_materia);
+      $busca_profesor = Profesor::findOne($id_profesor);
+      
+      if(!empty($calificaciones) && !is_null($busca_materia) && !is_null($busca_profesor) && $semestre > 0 && $bloque > 0  ){
+        foreach ($calificaciones as $key => $calificacion) {
+          $array_alumno = explode("-", $calificacion['id_alumno']);
+          if(isset($array_alumno[0]) && isset($array_alumno[1]) ){
+            $numero_evaluacion = $array_alumno[0];
+            $id_alumno = $array_alumno[1];
+            $busca_calificacion = CalificacionAlumno::findOne([
+              'no_evaluacion' => $numero_evaluacion,
+              'id_alumno' => $id_alumno,
+              'id_materia' => $id_materia,
+              'id_grupo' => $id_grupo,
+              'id_profesor' => $id_profesor,
+              'semestre' => $semestre,
+              'bloque' => $bloque,
+            ]);
+            if(!is_null($busca_calificacion)){
+              if( $busca_calificacion->campo_editable == 0 ){
+                $busca_calificacion->calificacion = $calificacion['calificacion'];
+                $busca_calificacion->fecha_actualizacion = Yii::$app->formatter->asDate('now', 'php:Y-m-d');
+                $busca_calificacion->save(false);
+              }else{
+                $data = [
+                  "code" => 422,
+                  "mensaje" => "Lo sentimos ya no puede modificar las calificaciones en este periodo.",
+                ];
+                return json_encode($data);
+              }
+            }else{
+              //inserta calificacion
+              $inserta_calificacion = new CalificacionAlumno();
+              $inserta_calificacion->no_evaluacion = $numero_evaluacion;
+              $inserta_calificacion->calificacion = $calificacion['calificacion'];
+              $inserta_calificacion->id_alumno = $id_alumno;
+              $inserta_calificacion->id_materia = $id_materia;
+              $inserta_calificacion->id_profesor = $id_profesor;
+              $inserta_calificacion->id_grupo = $id_grupo;
+              $inserta_calificacion->semestre = $semestre;
+              $inserta_calificacion->bloque = $bloque;
+              $inserta_calificacion->fecha_alta = Yii::$app->formatter->asDate('now', 'php:Y-m-d h:i:s');
+              $inserta_calificacion->fecha_actualizacion = Yii::$app->formatter->asDate('now', 'php:Y-m-d h:i:s');
+              $inserta_calificacion->nombre_materia = $busca_materia->nombre;
+              $inserta_calificacion->nombre_profesor = $busca_profesor->nombreCompleto;
+              $inserta_calificacion->save(false);
+              $data = [
+                "code" => 200,
+                "mensaje" => "Éxito",
+              ];
+            }
+          }else{
+            $data = [
+              "code" => 422,
+              "mensaje" => "Ocurrió un error al guardar las calificaciones, por favor contacte con el administrador.",
+            ];
+            return json_encode($data);
+          }
+         
+        }
+        
+      }else{
+        $data = [
+            "code" => 422,
+            "mensaje" => "Ocurrió un error al guardar las calificaciones, verifique que grupo, materia, semestre y Bloque sean válidos.",
+        ];
+      }
+      
       return json_encode($data);
     }
 
@@ -233,7 +429,7 @@ class ProfesoresController extends Controller
       }else{
         $data = [
             "code" => 422,
-            "mensaje" => "Ocurrió un error al guardar la asistencia, verifique que grupo, materia, semestre y blouqe sean válidos.",
+            "mensaje" => "Ocurrió un error al guardar la asistencia, verifique que grupo, materia, semestre y Bloque sean válidos.",
         ];
       }
       

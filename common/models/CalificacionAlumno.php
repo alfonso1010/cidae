@@ -36,10 +36,10 @@ class CalificacionAlumno extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['no_periodo', 'calificacion', 'no_evaluacion', 'id_alumno', 'id_materia', 'id_profesor', 'nombre_materia', 'nombre_profesor'], 'required'],
-            [['no_periodo', 'no_evaluacion', 'id_alumno', 'id_materia', 'id_profesor'], 'integer'],
+            [['calificacion', 'no_evaluacion', 'id_alumno', 'id_materia', 'id_profesor', 'nombre_materia', 'nombre_profesor','id_grupo','semestre','bloque'], 'required'],
+            [['no_evaluacion', 'id_alumno', 'id_materia', 'id_profesor','campo_editable'], 'integer'],
             [['calificacion'], 'number'],
-            [['observaciones'], 'string'],
+            [['observaciones','fecha_alta','fecha_actualizacion'], 'string'],
             [['nombre_materia', 'nombre_profesor'], 'string', 'max' => 255],
             [['id_alumno'], 'exist', 'skipOnError' => true, 'targetClass' => Alumnos::className(), 'targetAttribute' => ['id_alumno' => 'id_alumno']],
         ];
@@ -52,13 +52,18 @@ class CalificacionAlumno extends \yii\db\ActiveRecord
     {
         return [
             'id_calificacion_alumno' => 'Id Calificacion Alumno',
-            'no_periodo' => 'No Periodo',
             'calificacion' => 'Calificacion',
             'no_evaluacion' => 'No Evaluacion',
             'observaciones' => 'Observaciones',
             'id_alumno' => 'Id Alumno',
             'id_materia' => 'Id Materia',
             'id_profesor' => 'Id Profesor',
+            'id_grupo' => 'Id Grupo',
+            'semestre' => 'Semestre',
+            'bloque' => 'Bloque',
+            'fecha_alta' => 'fecha Alta',
+            'fecha_actualizacion' => 'fecha Actualización',
+            'campo_editable' => 'Campo Editable',
             'nombre_materia' => 'Nombre Materia',
             'nombre_profesor' => 'Nombre Profesor',
         ];
