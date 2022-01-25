@@ -39,7 +39,7 @@ $this->registerJs('
                     .setting({
                         "label":"Cerrar",
                          "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor, por favor inténtelo mas tarde</h4>",
-                            //"onok": function(){ location.reload();}
+                            "onok": function(){ location.reload();}
                     }).show();
                 }
             },
@@ -49,7 +49,7 @@ $this->registerJs('
                 .setting({
                     "label":"Cerrar",
                      "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor, por favor inténtelo mas tarde</h4>",
-                        //"onok": function(){ location.reload();}
+                        "onok": function(){ location.reload();}
                 }).show();
             },
             dataType: "json",

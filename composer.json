@@ -26,7 +26,8 @@
         "yiisoft/yii2-httpclient": "~2.0.0",
         "mdmsoft/yii2-admin": "~2.0",
         "kartik-v/yii2-widget-datetimepicker": "*",
-        "kartik-v/yii2-widget-select2": "@dev"
+        "kartik-v/yii2-widget-select2": "@dev",
+        "wadeshuler/yii2-sendgrid": "~1.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

@@ -15,6 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $url =Url::to(['profesores/cargaralumnoscal']);
 $url_guarda =Url::to(['profesores/guardarcalificaciones']);
+$url_registra =Url::to(['profesores/registrarcalificaciones']);
 
 $this->registerCss('
     table tr:hover {
@@ -53,7 +54,7 @@ $this->registerJs('
                     .setting({
                         "label":"Cerrar",
                          "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor, por favor inténtelo mas tarde</h4>",
-                            //"onok": function(){ location.reload();}
+                            "onok": function(){ location.reload();}
                     }).show();
                 }
             },
@@ -63,7 +64,7 @@ $this->registerJs('
                 .setting({
                     "label":"Cerrar",
                      "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor, por favor inténtelo mas tarde</h4>",
-                        //"onok": function(){ location.reload();}
+                        "onok": function(){ location.reload();}
                 }).show();
             },
             dataType: "json",
@@ -102,7 +103,7 @@ $this->registerJs('
                         .setting({
                             "label":"Cerrar",
                             "message":"<h3 style=\'color:green\' ><b>Éxito.</b></h3><h4>La calificación de los alumnos, se ha guardado correctamente</h4>",
-                            //"onok": function(){ location.reload();}
+                            "onok": function(){ location.reload();}
                         }).show();
                     }else if(data.code == 422 ){
                         alertify.alert()
@@ -116,7 +117,7 @@ $this->registerJs('
                     .setting({
                         "label":"Cerrar",
                          "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor, por favor contacte al administrador</h4>",
-                            //"onok": function(){ location.reload();}
+                            "onok": function(){ location.reload();}
                     }).show();
                 }
             },
@@ -125,7 +126,7 @@ $this->registerJs('
                 .setting({
                     "label":"Cerrar",
                      "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor,por favor contacte al administrador</h4>",
-                        //"onok": function(){ location.reload();}
+                        "onok": function(){ location.reload();}
                 }).show();
             },
             dataType: "json",
@@ -133,18 +134,68 @@ $this->registerJs('
         console.log(data_envio);
     }   
 
-    function confirmarRegistro(){
+    function confirmarRegistro(no_evaluacion){
         alertify.confirm("¿Está Seguro?", "<h3 style=\'color:brown;\'>Una vez que registre las calificaciones ya no podrá modificarlas</h3>", 
         function(){ 
-            console.log("de acuerdo");
+            registrarCalificaciones(no_evaluacion);
         },function(){
             console.log("cancelado");
         }).set({labels:{ok:"Estoy de acuerdo", cancel: "Cancelar"}});;
 
     }
    
-    function registrarCalificaciones(){
-
+    function registrarCalificaciones(no_evaluacion){
+        var id_grupo = $("#id_grupo").val();
+        var id_materia = $("#id_materia").val();
+        var semestre = $("#id_semestre").val();
+        var bloque = $("#bloque").val();
+       
+        $.ajax({
+            type:"POST", 
+            async:false,
+            url:"'.$url_registra.'",
+            data:{
+                "id_grupo": id_grupo, 
+                "id_materia": id_materia,  
+                "semestre": semestre, 
+                "bloque": bloque,
+                "no_evaluacion":no_evaluacion
+            },
+            success:function(data){ 
+                try{
+                    if(data.code == 200 ){
+                        alertify.alert()
+                        .setting({
+                            "label":"Cerrar",
+                            "message":"<h3 style=\'color:green\' ><b>Éxito.</b></h3><h4>La calificación de los alumnos, se ha Registrado correctamente</h4>",
+                            "onok": function(){ location.reload();}
+                        }).show();
+                    }else if(data.code == 422 ){
+                        alertify.alert()
+                        .setting({
+                            "label":"Cerrar",
+                             "message":"<h3 style=\'color:red\' ><b>Lo sentimos..</b></h3><h4>"+data.mensaje+"</h4>",
+                        }).show();
+                    }
+                }catch(e){
+                    alertify.alert()
+                    .setting({
+                        "label":"Cerrar",
+                         "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor, por favor contacte al administrador</h4>",
+                            "onok": function(){ location.reload();}
+                    }).show();
+                }
+            },
+            error: function(){
+                alertify.alert()
+                .setting({
+                    "label":"Cerrar",
+                     "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor,por favor contacte al administrador</h4>",
+                        "onok": function(){ location.reload();}
+                }).show();
+            },
+            dataType: "json",
+        });
     }
 
 ', View::POS_END);

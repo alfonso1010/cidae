@@ -22,6 +22,8 @@ use Yii;
  */
 class AsistenciaAlumno extends \yii\db\ActiveRecord
 {
+
+    public $nombre_grupo;
     /**
      * {@inheritdoc}
      */
@@ -29,6 +31,8 @@ class AsistenciaAlumno extends \yii\db\ActiveRecord
     {
         return 'asistencia_alumno';
     }
+
+   
 
     /**
      * {@inheritdoc}

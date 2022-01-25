@@ -74,7 +74,7 @@ class SiteController extends Controller
                 return $this->redirect(["profesores/principal"]);
                 break;
             case 'alumno':
-                return $this->redirect(["alumnos/principal"]);
+                return $this->redirect(["alumno/principal"]);
                 break;
             default:
                 Yii::$app->user->logout();
@@ -110,7 +110,7 @@ class SiteController extends Controller
                     return $this->redirect(["profesores/principal"]);
                     break;
                 case 'alumno':
-                    return $this->redirect(["alumnos/principal"]);
+                    return $this->redirect(["alumno/principal"]);
                     break;
                 default:
                     Yii::$app->user->logout();

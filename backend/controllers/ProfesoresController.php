@@ -13,6 +13,7 @@ use common\models\Carreras;
 use common\models\Alumnos;
 use common\models\Grupos;
 use common\models\HorariosProfesorMateriaSearch;
+use common\models\AsistenciaAlumnoSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -54,6 +55,12 @@ class ProfesoresController extends Controller
     public function actionPrincipal()
     {
       $id_profesor = Yii::$app->user->identity->id_responsable;
+
+      $busca_profesor = Profesor::findOne($id_profesor);
+      if(is_null($busca_profesor)){
+          Yii::$app->user->logout();
+          return $this->goHome();
+      }
       //obtiene los grupos a los que da materias el profesor
       $lista_grupos = HorariosProfesorMateria::find()
         ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo'])
@@ -120,18 +127,13 @@ class ProfesoresController extends Controller
     {
 
       $id_profesor = Yii::$app->user->identity->id_responsable;
-      //obtiene los grupos a los que da materias el profesor
-      $lista_grupos = HorariosProfesorMateria::find()
-        ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo'])
-        ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
-        ->where(['horarios_profesor_materia.id_profesor' => $id_profesor])
-        ->groupBy(['horarios_profesor_materia.id_grupo'])->asArray()->all();
+      $searchModel = new AsistenciaAlumnoSearch();
+      $dataProvider = $searchModel->searchAsistencias(Yii::$app->request->queryParams,$id_profesor);
 
-      $grupos = ArrayHelper::map($lista_grupos, 'id_grupo', 'nombre_grupo');
-      
-      return $this->render('asistencia', [
-        'grupos' => $grupos
-      ]);
+        return $this->render('reporteasistencias', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     public function actionCargaralumnos(){
@@ -191,6 +193,8 @@ class ProfesoresController extends Controller
       $semestre = ArrayHelper::getValue($datos, 'semestre', 0);
       $bloque = ArrayHelper::getValue($datos, 'bloque', 0);
 
+      $no_evaluacion = 0;
+
       $id_profesor = Yii::$app->user->identity->id_responsable;
       
       $alumnos = '
@@ -231,6 +235,7 @@ class ProfesoresController extends Controller
             $input_primera = "<input type='number' id='1-".$alumno->id_alumno."'  min='5' max='10'>";
             $input_segunda = "-";
           }else{
+            $no_evaluacion = 1;
             if($busca_primer_calificacion_alumno->campo_editable == 1){
               if(!is_null($busca_primer_calificacion_alumno)){
                 $disabled = ($busca_primer_calificacion_alumno->campo_editable)==1?"disabled":"";
@@ -239,9 +244,11 @@ class ProfesoresController extends Controller
                 $input_primera = "<input type='number' id='1-".$alumno->id_alumno."'  min='5' max='10'>";
               }
               if (!is_null($busca_segunda_calificacion_alumno)) {
+                $no_evaluacion = 2;
                 $disabled = ($busca_segunda_calificacion_alumno->campo_editable)==1?"disabled":"";
                 $input_segunda = "<input type='number' value='".$busca_segunda_calificacion_alumno->calificacion."' ".$disabled." id='2-".$alumno->id_alumno."'  min='0' max='10'>";
               }else{
+                $no_evaluacion = 0;
                 $input_segunda = "<input type='number' id='2-".$alumno->id_alumno."'  min='5' max='10'>";
               }
             }else{
@@ -278,14 +285,39 @@ class ProfesoresController extends Controller
           ";
         }
       }
-      $alumnos .= 
-          "<tr>
-            <td style='background-color:white' colspan='2'> 
+      $alumnos .= "<tr>";
+      $busca_primer_calificacion_alumno_registrada = CalificacionAlumno::findOne([
+        'id_materia' => $id_materia,
+        'id_grupo' => $id_grupo,
+        'id_profesor' => $id_profesor,
+        'semestre' => $semestre,
+        'bloque' => $bloque,
+        'no_evaluacion' => 1,
+        'campo_editable' => 1
+      ]);
+      $busca_segunda_calificacion_alumno_registrada = CalificacionAlumno::findOne([
+        'id_materia' => $id_materia,
+        'id_grupo' => $id_grupo,
+        'id_profesor' => $id_profesor,
+        'semestre' => $semestre,
+        'bloque' => $bloque,
+        'no_evaluacion' => 2,
+        'campo_editable' => 1
+      ]);
+      if(is_null($busca_primer_calificacion_alumno_registrada) | is_null($busca_segunda_calificacion_alumno_registrada) ){
+         $alumnos .= 
+          "<td style='background-color:white' colspan='2'> 
               <br><center><button type='button' onclick='guardarCalificacion()' class='btn btn-success'> Guardar Calificaciones </button></center>
-            </td>
-            <td style='background-color:white' colspan='2'> 
-              <br><center><button type='button' onclick='confirmarRegistro()' class='btn btn-warning'> Registrar Calificaciones </button></center>
-            </td>
+            </td>";
+        if ($no_evaluacion > 0) {
+          $alumnos .= "
+             <td style='background-color:white' colspan='2'> 
+                <br><center><button type='button' onclick='confirmarRegistro(".$no_evaluacion.")' class='btn btn-warning'> Registrar Calificaciones </button></center>
+              </td>
+          ";
+        }
+      }
+      $alumnos .= "
           </tr>
           </tbody>
       </table>
@@ -311,7 +343,7 @@ class ProfesoresController extends Controller
       $busca_materia = Materias::findOne($id_materia);
       $busca_profesor = Profesor::findOne($id_profesor);
       
-      if(!empty($calificaciones) && !is_null($busca_materia) && !is_null($busca_profesor) && $semestre > 0 && $bloque > 0  ){
+      if(!empty($calificaciones) && !is_null($busca_materia) && !is_null($busca_profesor) && $semestre > 0 && $bloque > 0 && $id_grupo > 0  ){
         foreach ($calificaciones as $key => $calificacion) {
           $array_alumno = explode("-", $calificacion['id_alumno']);
           if(isset($array_alumno[0]) && isset($array_alumno[1]) ){
@@ -379,6 +411,45 @@ class ProfesoresController extends Controller
       return json_encode($data);
     }
 
+    public function actionRegistrarcalificaciones(){
+      $datos = Yii::$app->request->post();
+      $id_grupo = ArrayHelper::getValue($datos, 'id_grupo', 0);
+      $id_materia = ArrayHelper::getValue($datos, 'id_materia', 0);
+      $semestre = ArrayHelper::getValue($datos, 'semestre', 0);
+      $bloque = ArrayHelper::getValue($datos, 'bloque', 0);
+      $numero_evaluacion = ArrayHelper::getValue($datos, 'no_evaluacion', 0);
+      $id_profesor = Yii::$app->user->identity->id_responsable;
+      $busca_materia = Materias::findOne($id_materia);
+      $busca_profesor = Profesor::findOne($id_profesor);
+      
+      if(!is_null($busca_materia) && !is_null($busca_profesor) && $semestre > 0 && $bloque > 0 && $id_grupo > 0 ){
+        //actualiza campo a no editable
+        CalificacionAlumno::updateAll([   // field to be updated in first array
+          'campo_editable' => 1,
+        ],
+        [  // conditions in second array
+          'no_evaluacion' => $numero_evaluacion,
+          'id_materia' => $id_materia,
+          'id_grupo' => $id_grupo,
+          'id_profesor' => $id_profesor,
+          'semestre' => $semestre,
+          'bloque' => $bloque,
+        ]);
+        $data = [
+          "code" => 200,
+          "mensaje" => "Éxito",
+        ];
+        
+      }else{
+        $data = [
+            "code" => 422,
+            "mensaje" => "Ocurrió un error al registrar las calificaciones, verifique que grupo, materia, semestre y Bloque sean válidos.",
+        ];
+      }
+      
+      return json_encode($data);
+    }
+
     public function actionGuardarasistencia(){
       $datos = Yii::$app->request->post();
       $id_grupo = ArrayHelper::getValue($datos, 'id_grupo', 0);
@@ -433,6 +504,75 @@ class ProfesoresController extends Controller
         ];
       }
       
+      return json_encode($data);
+    }
+
+
+    public function actionVerasistencias(){
+      $datos = Yii::$app->request->get();
+      $id_asistencia_alumno = ArrayHelper::getValue($datos, 'id_asistencia_alumno', 0);
+      $id_profesor = Yii::$app->user->identity->id_responsable;
+      $busca_asistencia = AsistenciaAlumno::findOne($id_asistencia_alumno);
+      
+      if(!is_null($busca_asistencia)){
+        $busca_alumnos = AsistenciaAlumno::find()
+        ->select('asistencia_alumno.asistio,alumnos.*')
+        ->innerJoin( 'alumnos','asistencia_alumno.id_alumno = alumnos.id_alumno')
+        ->where([
+          'asistencia_alumno.id_materia' => $busca_asistencia->id_materia,
+          'asistencia_alumno.id_profesor' => $busca_asistencia->id_profesor,
+          'asistencia_alumno.id_grupo' => $busca_asistencia->id_grupo,
+          'asistencia_alumno.semestre' => $busca_asistencia->semestre,
+          'asistencia_alumno.bloque' => $busca_asistencia->bloque,
+          'asistencia_alumno.fecha_asistencia' => $busca_asistencia->fecha_asistencia
+        ])->asArray()->all();
+        $alumnos = '
+          <table class="table">
+              <tbody>
+                  <tr >
+                      <th style="border:1px solid #252525;color:#092F87">Nombre Alumno</th>
+                      <th style="border:1px solid #252525;color:#092F87">Asistencia</th>
+                  </tr>';
+        if(!empty($busca_alumnos)){
+          foreach ($busca_alumnos as $key => $alumno) {
+            if($alumno['asistio'] == 1){
+              $alumnos .= "
+              <tr>
+              <td width='35%' style='white-space: nowrap;border:1px solid #252525;'> 
+                <b style='color: #252525;' >".$alumno['nombre']." ".$alumno['apellido_paterno']." ".$alumno['apellido_materno']."</b>
+              </td>
+              <td style='white-space: nowrap;border:1px solid #252525;'> 
+                 <p style='color:green;'> Asistió </p>
+              </td>";
+            }else{
+              $alumnos .= "
+              <tr>
+              <td width='35%' style='white-space: nowrap;border:1px solid #252525;'> 
+                <b style='color: #252525;' >".$alumno['nombre']." ".$alumno['apellido_paterno']." ".$alumno['apellido_materno']."</b>
+              </td>
+              <td style='white-space: nowrap;border:1px solid #252525;'> 
+                 <p style='color:red;'> No Asistió </p>
+              </td>";
+            }
+            $alumnos .= "</tr>";
+          }
+        }
+        $alumnos .="
+            </tbody>
+        </table>
+        ";
+        $data = [
+          "code" => 200,
+          "tabla" => $alumnos,
+          "mensaje" => "Éxito",
+        ];
+      }else{
+         $data = [
+            "code" => 422,
+            "mensaje" => "Ocurrió un error al cargar las asistencias.",
+        ];
+      }
+    
       return json_encode($data);
     }
 
