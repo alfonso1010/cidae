@@ -52,7 +52,7 @@ class Grupos extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nombre', 'id_carrera','generacion','modalidad'], 'required'],
+            [['nombre', 'id_carrera','generacion','modalidad','fecha_inicio_clases'], 'required'],
             [['capacidad', 'id_carrera', 'no_evaluaciones_periodo', 'activo'], 'integer'],
             [['fecha_alta'], 'safe'],
             [['nombre'], 'string', 'max' => 100],
@@ -73,6 +73,7 @@ class Grupos extends \yii\db\ActiveRecord
             'capacidad' => 'Capacidad',
             'id_carrera' => 'Id Carrera',
             'no_evaluaciones_periodo' => 'No Evaluaciones Periodo',
+            'fecha_inicio_clases' => 'Fecha Inicio Clases',
             'fecha_alta' => 'Fecha Alta',
             'activo' => 'Activo',
         ];

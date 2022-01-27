@@ -100,7 +100,7 @@ use kartik\widgets\Select2;
                                 'options' => [
                                     'placeholder' => 'Elige Fecha de Nacimiento',
                                     'required' => true,
-                                    'value' => "1990-01-01"
+                                    'value' => (strlen($model->fecha_nacimiento) > 0)?$model->fecha_nacimiento:"1990-01-01"
                                 ],
                                 'pluginOptions' => [
                                     'autoclose'=>true,

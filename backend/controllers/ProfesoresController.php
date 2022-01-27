@@ -63,24 +63,30 @@ class ProfesoresController extends Controller
       }
       //obtiene los grupos a los que da materias el profesor
       $lista_grupos = HorariosProfesorMateria::find()
-        ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo'])
+        ->select(['horarios_profesor_materia.id_grupo','grupos.nombre as nombre_grupo','grupos.generacion'])
         ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
         ->where(['horarios_profesor_materia.id_profesor' => $id_profesor])
         ->andWhere(['grupos.activo' => 0])
-        ->groupBy(['horarios_profesor_materia.id_grupo'])->asArray()->all();
-      $grupos = "";
+        ->groupBy([
+          'horarios_profesor_materia.id_grupo',
+        ])->asArray()->all();
+      //print_r($lista_grupos);die();
+      $grupos = [];
       foreach ($lista_grupos as $key => $grupo) {
-        $grupos .= $grupo['id_grupo'].",";
+        $busca_grupo = Grupos::findOne($grupo['id_grupo']);
+        if(!is_null($busca_grupo)){
+          $semestre_bloque = \common\helpers\UtilidadesHelper::calculaSemestreBloque($busca_grupo);
+          if(!is_null($semestre_bloque)){
+            $grupo['semestre_actual'] = $semestre_bloque['semestre'];
+            $grupo['bloque_actual'] = $semestre_bloque['bloque'];
+            $grupos[] = $grupo;
+          }
+        }
       }
-      $grupos = trim($grupos,",");
-      $generaciones = [];
-      if(strlen($grupos) > 0){
-        $lista_generaciones = Grupos::find()->where('id_grupo IN ('.$grupos.')')->groupBy(['generacion'])->asArray()->all();
-        $generaciones = ArrayHelper::map($lista_generaciones, 'generacion', 'generacion');
-      }
-      
+      //print_r($grupos);die();
       return $this->render('principal', [
-        'generaciones' => $generaciones
+        'grupos' => $grupos,
+        'id_profesor' => $id_profesor
       ]);
     }
 
@@ -140,10 +146,29 @@ class ProfesoresController extends Controller
       $datos = Yii::$app->request->get();
       $id_grupo = ArrayHelper::getValue($datos, 'id_grupo', 0);
       $id_materia = ArrayHelper::getValue($datos, 'id_materia', 0);
-
       $id_profesor = Yii::$app->user->identity->id_responsable;
+      $busca_grupo = Grupos::findOne($id_grupo);
+      if(is_null($busca_grupo)){
+        $data = [
+          "code" => 422,
+          "mensaje" => "Grupo no existe.",
+        ];
+        return json_encode($data);
+      }
+
+      $semestre_bloque = \common\helpers\UtilidadesHelper::calculaSemestreBloque($busca_grupo);
+      if(is_null($semestre_bloque)){
+        $data = [
+          "code" => 422,
+          "mensaje" => "Ocurrió un error al obtener semestre y bloque, contacte al administrador .",
+        ];
+        return json_encode($data);
+      }
+      $semestre = $semestre_bloque['semestre'];
+      $bloque = $semestre_bloque['bloque'];
       
       $alumnos = '
+      <div style="font-size:18px;color: brown;margin:8px;"> Asistencia del Semestre '.$semestre.', Bloque '.$bloque.'</div>
       <form  method="post">
         <table class="table">
             <tbody>
@@ -190,14 +215,32 @@ class ProfesoresController extends Controller
       $datos = Yii::$app->request->get();
       $id_grupo = ArrayHelper::getValue($datos, 'id_grupo', 0);
       $id_materia = ArrayHelper::getValue($datos, 'id_materia', 0);
-      $semestre = ArrayHelper::getValue($datos, 'semestre', 0);
-      $bloque = ArrayHelper::getValue($datos, 'bloque', 0);
+      $busca_grupo = Grupos::findOne($id_grupo);
+      if(is_null($busca_grupo)){
+        $data = [
+          "code" => 422,
+          "mensaje" => "Grupo no existe.",
+        ];
+        return json_encode($data);
+      }
 
+      $semestre_bloque = \common\helpers\UtilidadesHelper::calculaSemestreBloque($busca_grupo);
+      if(is_null($semestre_bloque)){
+        $data = [
+          "code" => 422,
+          "mensaje" => "Ocurrió un error al obtener semestre y bloque, contacte al administrador .",
+        ];
+        return json_encode($data);
+      }
+      $semestre = $semestre_bloque['semestre'];
+      $bloque = $semestre_bloque['bloque'];
+      
       $no_evaluacion = 0;
 
       $id_profesor = Yii::$app->user->identity->id_responsable;
       
       $alumnos = '
+       <div style="font-size:18px;color: brown;margin:8px;"> Calificaciones del Semestre '.$semestre.', Bloque '.$bloque.'</div>
       <form method="post">
         <table class="table">
             <tbody>
@@ -336,12 +379,30 @@ class ProfesoresController extends Controller
       $datos = Yii::$app->request->post();
       $id_grupo = ArrayHelper::getValue($datos, 'id_grupo', 0);
       $id_materia = ArrayHelper::getValue($datos, 'id_materia', 0);
-      $semestre = ArrayHelper::getValue($datos, 'semestre', 0);
-      $bloque = ArrayHelper::getValue($datos, 'bloque', 0);
       $calificaciones = ArrayHelper::getValue($datos, 'calificaciones', []);
       $id_profesor = Yii::$app->user->identity->id_responsable;
       $busca_materia = Materias::findOne($id_materia);
       $busca_profesor = Profesor::findOne($id_profesor);
+      $busca_grupo = Grupos::findOne($id_grupo);
+      if(is_null($busca_grupo)){
+      $data = [
+          "code" => 422,
+          "mensaje" => "Grupo no existe.",
+        ];
+        return json_encode($data);
+      }
+
+      $semestre_bloque = \common\helpers\UtilidadesHelper::calculaSemestreBloque($busca_grupo);
+      if(is_null($semestre_bloque)){
+        $data = [
+          "code" => 422,
+          "mensaje" => "Ocurrió un error al obtener semestre y bloque, contacte al administrador .",
+        ];
+        return json_encode($data);
+      }
+      $semestre = $semestre_bloque['semestre'];
+      $bloque = $semestre_bloque['bloque'];
+
       
       if(!empty($calificaciones) && !is_null($busca_materia) && !is_null($busca_profesor) && $semestre > 0 && $bloque > 0 && $id_grupo > 0  ){
         foreach ($calificaciones as $key => $calificacion) {
@@ -415,12 +476,29 @@ class ProfesoresController extends Controller
       $datos = Yii::$app->request->post();
       $id_grupo = ArrayHelper::getValue($datos, 'id_grupo', 0);
       $id_materia = ArrayHelper::getValue($datos, 'id_materia', 0);
-      $semestre = ArrayHelper::getValue($datos, 'semestre', 0);
-      $bloque = ArrayHelper::getValue($datos, 'bloque', 0);
       $numero_evaluacion = ArrayHelper::getValue($datos, 'no_evaluacion', 0);
       $id_profesor = Yii::$app->user->identity->id_responsable;
       $busca_materia = Materias::findOne($id_materia);
       $busca_profesor = Profesor::findOne($id_profesor);
+      $busca_grupo = Grupos::findOne($id_grupo);
+      if(is_null($busca_grupo)){
+        $data = [
+          "code" => 422,
+          "mensaje" => "Grupo no existe.",
+        ];
+        return json_encode($data);
+      }
+
+      $semestre_bloque = \common\helpers\UtilidadesHelper::calculaSemestreBloque($busca_grupo);
+      if(is_null($semestre_bloque)){
+        $data = [
+          "code" => 422,
+          "mensaje" => "Ocurrió un error al obtener semestre y bloque, contacte al administrador .",
+        ];
+        return json_encode($data);
+      }
+      $semestre = $semestre_bloque['semestre'];
+      $bloque = $semestre_bloque['bloque'];
       
       if(!is_null($busca_materia) && !is_null($busca_profesor) && $semestre > 0 && $bloque > 0 && $id_grupo > 0 ){
         //actualiza campo a no editable
@@ -454,14 +532,23 @@ class ProfesoresController extends Controller
       $datos = Yii::$app->request->post();
       $id_grupo = ArrayHelper::getValue($datos, 'id_grupo', 0);
       $id_materia = ArrayHelper::getValue($datos, 'id_materia', 0);
-      $semestre = ArrayHelper::getValue($datos, 'semestre', 0);
-      $bloque = ArrayHelper::getValue($datos, 'bloque', 0);
       $asistencia = ArrayHelper::getValue($datos, 'asistencia', []);
       $id_profesor = Yii::$app->user->identity->id_responsable;
       $busca_materia = Materias::findOne($id_materia);
       $busca_profesor = Profesor::findOne($id_profesor);
-      
-      if(!empty($asistencia) && !is_null($busca_materia) && !is_null($busca_profesor) && $semestre > 0 && $bloque > 0  ){
+      $busca_grupo = Grupos::findOne($id_grupo);
+
+      if(!empty($asistencia) && !is_null($busca_grupo) && !is_null($busca_materia) && !is_null($busca_profesor)){
+        //calcula semestre y bloque actual
+        $semestre_bloque = \common\helpers\UtilidadesHelper::calculaSemestreBloque($busca_grupo);
+        if(is_null($semestre_bloque)){
+          $data = [
+            "code" => 422,
+            "mensaje" => "Ocurrió un error al obtener semestre y bloque, contacte al administrador .",
+          ];
+        }
+        $semestre = $semestre_bloque['semestre'];
+        $bloque = $semestre_bloque['bloque'];
         $busca_asistencia = AsistenciaAlumno::findAll([
           'fecha_asistencia' => Yii::$app->formatter->asDate('now', 'php:Y-m-d'),
           'id_materia' => $id_materia,

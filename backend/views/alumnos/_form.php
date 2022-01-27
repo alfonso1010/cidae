@@ -98,7 +98,7 @@ use kartik\widgets\Select2;
                                 'options' => [
                                     'placeholder' => 'Elige Fecha de Nacimiento',
                                     'required' => true,
-                                    'value' => "1995-01-01"
+                                    'value' => (strlen($model->fecha_nacimiento) > 0)?$model->fecha_nacimiento:"1995-01-01"
                                 ],
                                 'pluginOptions' => [
                                     'autoclose'=>true,
@@ -117,7 +117,7 @@ use kartik\widgets\Select2;
                                 'options' => [
                                     'placeholder' => 'Seleccione Fecha Ingreso',
                                     'required' => true,
-                                    'value' => date("Y-m-d")
+                                    'value' => (strlen($model->fecha_ingreso) > 0)?$model->fecha_ingreso:date("Y-m-d")
                                 ],
                                 'pluginOptions' => [
                                     'autoclose'=>true,

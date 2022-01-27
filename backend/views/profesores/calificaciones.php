@@ -29,8 +29,6 @@ $this->registerJs('
     function cargaAlumnos(){
         var id_grupo = $("#id_grupo").val();
         var id_materia = $("#id_materia").val();
-        var semestre = $("#id_semestre").val();
-        var bloque = $("#bloque").val();
         $("#carga_alumnos").html("<div class=\'loading\'><img src=\'https://www.jose-aguilar.com/scripts/jquery/loading/images/loader.gif\' alt=\'loading\' /><br/>Un momento, por favor...</div>");
         $.ajax({
             type:"GET", 
@@ -39,8 +37,6 @@ $this->registerJs('
             data:{
                 "id_grupo": id_grupo, 
                 "id_materia": id_materia,
-                "semestre": semestre,
-                "bloque": bloque,
             },
             success:function(data){ 
                 try{
@@ -75,8 +71,6 @@ $this->registerJs('
         var data_envio = [];
         var id_grupo = $("#id_grupo").val();
         var id_materia = $("#id_materia").val();
-        var semestre = $("#id_semestre").val();
-        var bloque = $("#bloque").val();
         $("input").each(function() {
             if($(this).attr("id") != undefined && $(this).prop("disabled") == false){
                 data_envio.push({
@@ -92,8 +86,6 @@ $this->registerJs('
             data:{
                 "id_grupo": id_grupo, 
                 "id_materia": id_materia,  
-                "semestre": semestre, 
-                "bloque": bloque, 
                 "calificaciones":data_envio 
             },
             success:function(data){ 
@@ -147,8 +139,6 @@ $this->registerJs('
     function registrarCalificaciones(no_evaluacion){
         var id_grupo = $("#id_grupo").val();
         var id_materia = $("#id_materia").val();
-        var semestre = $("#id_semestre").val();
-        var bloque = $("#bloque").val();
        
         $.ajax({
             type:"POST", 
@@ -157,8 +147,6 @@ $this->registerJs('
             data:{
                 "id_grupo": id_grupo, 
                 "id_materia": id_materia,  
-                "semestre": semestre, 
-                "bloque": bloque,
                 "no_evaluacion":no_evaluacion
             },
             success:function(data){ 
@@ -209,7 +197,7 @@ $this->registerJs('
         <div class="row">
             <div class="col-xs-12">
                 <div class="col-sm-8">
-                    <h4><b style="color: #092f87">Para capturar Calificaciones seleccione Grupo, materia, semestre y bloque</b></h4><br>
+                    <h4><b style="color: #092f87">Para capturar calificaciones seleccione Grupo y materia</b></h4><br>
                 </div>
             </div>
         </div>
@@ -245,39 +233,10 @@ $this->registerJs('
                         "id" => "id_materia",
                         'class' => "form-control ",
                         'placeholder' => 'Seleccione Materia ...',
-                         'onChange' => '$.get( "'.urldecode(Yii::$app->urlManager->createUrl('profesores/buscasemestremateria')).'?id_materia="+$(this).val()+"&id_grupo="+$("#id_grupo").val(), function( data ) {
-                                  $("select#id_semestre").html( data );
-                                  $("#table_alumnos").html("");
-                                });'
+                         'onChange' => 'cargaAlumnos();'
                     ]);
                      ?>
                     <div id="carga_materias"></div>
-                </div>
-                <div class="col-sm-3">
-                    <label>Seleccione Semestre</label>
-                    <?= // With a model and without ActiveForm
-                    Html::dropDownList('semestre',null,["0" => "Seleccione Semestre"],[
-                        "id" => "id_semestre",
-                        'class' => "form-control ",
-                        'placeholder' => 'Seleccione Semestre ...',
-                    ]);
-                     ?>
-                    <div id="carga_materias"></div>
-                </div>
-                <div class="col-sm-3">
-                    <label>Seleccione Bloque</label>
-                    <?= // With a model and without ActiveForm
-                    Html::dropDownList('bloque',null,[
-                            "0" => "Seleccione Bloque",
-                            "1" => "Bloque 1",
-                            "2" => "Bloque 2",
-                        ],[
-                        "id" => "bloque",
-                        'class' => "form-control ",
-                        'placeholder' => 'Seleccione Bloque ...',
-                        'onChange' => "cargaAlumnos();"
-                    ]);
-                     ?>
                 </div>
             </div>
         </div>

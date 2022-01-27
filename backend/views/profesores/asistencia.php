@@ -66,8 +66,6 @@ $this->registerJs('
         var data_envio = [];
         var id_grupo = $("#id_grupo").val();
         var id_materia = $("#id_materia").val();
-        var semestre = $("#id_semestre").val();
-        var bloque = $("#bloque").val();
         $("input:radio:checked").each(function() {
             data_envio.push({
                 "id_alumno":$(this).attr("name"),
@@ -81,8 +79,6 @@ $this->registerJs('
             data:{
                 "id_grupo": id_grupo, 
                 "id_materia": id_materia,  
-                "semestre": semestre, 
-                "bloque": bloque, 
                 "asistencia":data_envio 
             },
             success:function(data){ 
@@ -135,7 +131,7 @@ $this->registerJs('
         <div class="row">
             <div class="col-xs-12">
                 <div class="col-sm-8">
-                    <h4><b style="color: #092f87">Para tomar asisteencia seleccione Grupo, materia, semestre y bloque</b></h4><br>
+                    <h4><b style="color: #092f87">Para tomar asistencia seleccione Grupo, materia</b></h4><br>
                 </div>
             </div>
         </div>
@@ -171,39 +167,10 @@ $this->registerJs('
                         "id" => "id_materia",
                         'class' => "form-control ",
                         'placeholder' => 'Seleccione Materia ...',
-                         'onChange' => '$.get( "'.urldecode(Yii::$app->urlManager->createUrl('profesores/buscasemestremateria')).'?id_materia="+$(this).val()+"&id_grupo="+$("#id_grupo").val(), function( data ) {
-                                  $("select#id_semestre").html( data );
-                                  $("#table_alumnos").html("");
-                                });'
+                         'onChange' => 'cargaAlumnos();'
                     ]);
                      ?>
                     <div id="carga_materias"></div>
-                </div>
-                <div class="col-sm-3">
-                    <label>Seleccione Semestre</label>
-                    <?= // With a model and without ActiveForm
-                    Html::dropDownList('semestre',null,["0" => "Seleccione Semestre"],[
-                        "id" => "id_semestre",
-                        'class' => "form-control ",
-                        'placeholder' => 'Seleccione Semestre ...',
-                    ]);
-                     ?>
-                    <div id="carga_materias"></div>
-                </div>
-                <div class="col-sm-3">
-                    <label>Seleccione Bloque</label>
-                    <?= // With a model and without ActiveForm
-                    Html::dropDownList('bloque',null,[
-                            "0" => "Seleccione Bloque",
-                            "1" => "Bloque 1",
-                            "2" => "Bloque 2",
-                        ],[
-                        "id" => "bloque",
-                        'class' => "form-control ",
-                        'placeholder' => 'Seleccione Bloque ...',
-                        'onChange' => "cargaAlumnos();"
-                    ]);
-                     ?>
                 </div>
             </div>
         </div>
