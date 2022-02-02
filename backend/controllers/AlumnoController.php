@@ -58,8 +58,7 @@ class AlumnoController extends Controller
             Yii::$app->user->logout();
             return $this->goHome();
         }
-      
-        
+    
         return $this->render('principal', [
             'busca_alumno' => $busca_alumno
         ]);
