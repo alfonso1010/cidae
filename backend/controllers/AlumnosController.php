@@ -11,6 +11,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
+use yii\web\UploadedFile;
 
 /**
  * AlumnosController implements the CRUD actions for Alumnos model.
@@ -97,8 +98,15 @@ class AlumnosController extends Controller
             if($user_alumno->save()){
                 //asigna rol
                 User::asignaRol($user_alumno->id,"alumno");
+                $model->file_acta = UploadedFile::getInstance($model, 'file_acta');
+                $model->file_curp = UploadedFile::getInstance($model, 'file_curp');
+                $model->file_ine = UploadedFile::getInstance($model, 'file_ine');
+                $model->file_comp_domi = UploadedFile::getInstance($model, 'file_comp_domi');
+                $model->file_cert_bachi = UploadedFile::getInstance($model, 'file_cert_bachi');
+                $model->uploadFiles();
             }else{
-                //print_r($user_alumno->getFirstErrors());die();
+                //print_r(\Yii::getAlias('@webroot')."/docs_alumnos");die();
+                print_r($user_alumno->getFirstErrors());die();
                 $model->delete();
                 Yii::$app->session->setFlash(
                     'danger',
@@ -137,6 +145,12 @@ class AlumnosController extends Controller
             if(!is_null($user_alumno)){
                 $user_alumno->setPassword($model->matricula);
                 $user_alumno->save();
+                $model->file_acta = UploadedFile::getInstance($model, 'file_acta');
+                $model->file_curp = UploadedFile::getInstance($model, 'file_curp');
+                $model->file_ine = UploadedFile::getInstance($model, 'file_ine');
+                $model->file_comp_domi = UploadedFile::getInstance($model, 'file_comp_domi');
+                $model->file_cert_bachi = UploadedFile::getInstance($model, 'file_cert_bachi');
+                $model->uploadFiles();
             }
             return $this->redirect(['view', 'id' => $model->id_alumno]);
         }

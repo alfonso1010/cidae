@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="alumnos-view">
-     <div class="box box-primary">
+    <div class="box box-primary">
         <div class="box-header with-border">
             <h3 class="box-title"><?= Html::encode($this->title) ?></h3>
         </div>
@@ -56,6 +56,58 @@ $this->params['breadcrumbs'][] = $this->title;
                         'fecha_alta',
                     ],
                 ]) ?>
+        </div>
+    </div>
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title">Documentos Alumno:</h3>
+        </div>
+        <div class="box-body">
+            <div class="row">
+                <?php
+                if(strlen($model->doc_acta_nacimiento) > 0){
+                    $ruta = \Yii::getAlias('@web')."/docs_alumnos/".$model->id_alumno."/".$model->doc_acta_nacimiento;
+                    echo '
+                    <div class="col-sm-4">
+                        <embed src="'.$ruta.'" width="500" height="500">
+                    </div>
+                    ';
+                }
+                if(strlen($model->doc_curp) > 0){
+                    $ruta = \Yii::getAlias('@web')."/docs_alumnos/".$model->id_alumno."/".$model->doc_curp;
+                    echo '
+                    <div class="col-sm-4">
+                        <embed src="'.$ruta.'" width="500" height="500">
+                    </div>
+                    ';
+                }
+                if(strlen($model->doc_ine) > 0){
+                    $ruta = \Yii::getAlias('@web')."/docs_alumnos/".$model->id_alumno."/".$model->doc_ine;
+                    echo '
+                    <div class="col-sm-4">
+                        <embed src="'.$ruta.'" width="500" height="500">
+                    </div>
+                    ';
+                }
+                if(strlen($model->doc_comp_domicilio) > 0){
+                    $ruta = \Yii::getAlias('@web')."/docs_alumnos/".$model->id_alumno."/".$model->doc_comp_domicilio;
+                    echo '
+                    <div class="col-sm-4">
+                        <embed src="'.$ruta.'" width="500" height="500">
+                    </div>
+                    ';
+                }
+                if(strlen($model->doc_certificado_bachillerato) > 0){
+                    $ruta = \Yii::getAlias('@web')."/docs_alumnos/".$model->id_alumno."/".$model->doc_certificado_bachillerato;
+                    echo '
+                    <div class="col-sm-4">
+                        <embed src="'.$ruta.'" width="500" height="500">
+                    </div>
+                    ';
+                }
+
+                ?>
+            </div>
         </div>
     </div>
 </div>

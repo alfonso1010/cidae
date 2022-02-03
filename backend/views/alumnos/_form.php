@@ -16,7 +16,7 @@ use kartik\widgets\Select2;
         </div>
         <div class="box-body">
             <?php 
-                $form = ActiveForm::begin(); 
+                $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); 
                 echo $form->errorSummary($model);
             ?>
 
@@ -140,6 +140,31 @@ use kartik\widgets\Select2;
                     </div>
                      <div class="col-sm-4">
                         <?= $form->field($model, 'direccion_contacto_emergencia')->textarea(['rows' => 4]) ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'file_acta')->fileInput()->label("Doc. Acta Nacimiento"); ?>
+                    </div>
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'file_curp')->fileInput()->label("Doc. CURP"); ?>
+                    </div>
+                     <div class="col-sm-4">
+                        <?= $form->field($model, 'file_ine')->fileInput()->label("Doc. INE"); ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'file_comp_domi')->fileInput()->label("Doc. Comp. Domicilio"); ?>
+                    </div>
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'file_cert_bachi')->fileInput()->label("Doc. Certificado Bachillerato"); ?>
                     </div>
                 </div>
             </div>

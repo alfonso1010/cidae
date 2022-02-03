@@ -15,6 +15,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use common\models\User;
+use yii\web\UploadedFile;
 
 /**
  * ProfesorController implements the CRUD actions for Profesor model.
@@ -97,6 +98,17 @@ class ProfesorController extends Controller
             if($user_profesor->save()){
                 //asigna rol
                 User::asignaRol($user_profesor->id,"profesor");
+                //carga documentos
+                $model->file_acta = UploadedFile::getInstance($model, 'file_acta');
+                $model->file_curp = UploadedFile::getInstance($model, 'file_curp');
+                $model->file_ine = UploadedFile::getInstance($model, 'file_ine');
+                $model->file_comp_domi = UploadedFile::getInstance($model, 'file_comp_domi');
+                $model->file_rfc = UploadedFile::getInstance($model, 'file_rfc');
+                $model->file_nss = UploadedFile::getInstance($model, 'file_nss');
+                $model->file_titulo = UploadedFile::getInstance($model, 'file_titulo');
+                $model->file_cedula = UploadedFile::getInstance($model, 'file_cedula');
+                $model->file_cv = UploadedFile::getInstance($model, 'file_cv');
+                $model->uploadFiles();
             }else{
                 //print_r($user_profesor->getFirstErrors());die();
                 $model->delete();
@@ -132,6 +144,17 @@ class ProfesorController extends Controller
             if(!is_null($user_profesor)){
                 $user_profesor->setPassword($model->cedula);
                 $user_profesor->save();
+                //carga documentos
+                $model->file_acta = UploadedFile::getInstance($model, 'file_acta');
+                $model->file_curp = UploadedFile::getInstance($model, 'file_curp');
+                $model->file_ine = UploadedFile::getInstance($model, 'file_ine');
+                $model->file_comp_domi = UploadedFile::getInstance($model, 'file_comp_domi');
+                $model->file_rfc = UploadedFile::getInstance($model, 'file_rfc');
+                $model->file_nss = UploadedFile::getInstance($model, 'file_nss');
+                $model->file_titulo = UploadedFile::getInstance($model, 'file_titulo');
+                $model->file_cedula = UploadedFile::getInstance($model, 'file_cedula');
+                $model->file_cv = UploadedFile::getInstance($model, 'file_cv');
+                $model->uploadFiles();
             }
             return $this->redirect(['view', 'id' => $model->id_profesor]);
         }

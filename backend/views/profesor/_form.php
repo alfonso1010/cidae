@@ -128,6 +128,50 @@ use kartik\widgets\Select2;
                 </div>
             </div>
 
+             <div class="row">
+                <div class="col-xs-12">
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'file_acta')->fileInput()->label("Doc. Acta Nacimiento"); ?>
+                    </div>
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'file_curp')->fileInput()->label("Doc. CURP"); ?>
+                    </div>
+                     <div class="col-sm-4">
+                        <?= $form->field($model, 'file_ine')->fileInput()->label("Doc. INE"); ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="col-sm-4">
+                       <?= $form->field($model, 'file_rfc')->fileInput()->label("Doc. RFC"); ?>
+                    </div>
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'file_nss')->fileInput()->label("Doc. NSS"); ?>
+                    </div>
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'file_cedula')->fileInput()->label("Doc. Cédula"); ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'file_titulo')->fileInput()->label("Doc. Título"); ?>
+                    </div>
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'file_cv')->fileInput()->label("Doc. Currículum"); ?>
+                    </div>
+                    <div class="col-sm-4">
+                         <?= $form->field($model, 'file_comp_domi')->fileInput()->label("Doc. Comp. Domicilio"); ?>
+                    </div>
+                </div>
+            </div>
+
+
+
             <div class="row">
                 <div class="col-xs-12">
                     <div class="col-sm-5"></div>
