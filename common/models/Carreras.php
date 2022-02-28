@@ -50,7 +50,7 @@ class Carreras extends \yii\db\ActiveRecord
     {
         return [
             [['tipo_carrera', 'total_periodos', 'activo'], 'integer'],
-            [['nombre', 'clave', 'total_periodos', 'fecha_alta'], 'required'],
+            [['nombre', 'clave', 'total_periodos'], 'required'],
             [['fecha_alta'], 'safe'],
             [['nombre', 'clave', 'rvoe'], 'string', 'max' => 255],
         ];

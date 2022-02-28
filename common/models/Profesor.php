@@ -131,6 +131,9 @@ class Profesor extends \yii\db\ActiveRecord
         if(!file_exists($path)){
             mkdir($path,0777);
         }
+        if (!file_exists($path."index.html") ){ 
+            $fp = fopen($path."index.html","w+"); 
+        }
         return $path;
     }
 

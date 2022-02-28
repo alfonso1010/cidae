@@ -12,6 +12,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
+use common\models\PagosAlumno;
+use common\models\PagosAlumnoSearch;
 
 /**
  * AlumnosController implements the CRUD actions for Alumnos model.
@@ -55,6 +57,36 @@ class AlumnosController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionPagos(){
+        $model_pagos = new PagosAlumno();
+        $searchModel = new PagosAlumnoSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('pagos', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'modelPagos' => $model_pagos,
+        ]);
+    }
+
+    public function actionAprobarpago($id){
+        $busca_pago = PagosAlumno::findOne($id);
+        if (!is_null($busca_pago)) {
+            $busca_pago->estatus_pago = PagosAlumno::APROBADO;
+            $busca_pago->save(false);
+        }
+        return $this->redirect(['pagos']);
+    }
+
+    public function actionDeclinarpago($id){
+        $busca_pago = PagosAlumno::findOne($id);
+        if (!is_null($busca_pago)) {
+            $busca_pago->estatus_pago = PagosAlumno::DECLINADO;
+            $busca_pago->save(false);
+        }
+        return $this->redirect(['pagos']);
     }
 
     /**
