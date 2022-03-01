@@ -56,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <?php
                 if(strlen($model->doc_acta_nacimiento) > 0){
-                    $ruta = \Yii::getAlias('@web')."/docs_docentes/".$model->id_profesor."/".$model->doc_acta_nacimiento;
+                    $ruta = "http://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_acta_nacimiento;
                     echo '
                     <div class="col-sm-3">
                         <center><h4 style="color:brown"> Acta de Nacimiento </h4></center>
@@ -65,7 +65,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ';
                 }
                 if(strlen($model->doc_curp) > 0){
-                    $ruta = \Yii::getAlias('@web')."/docs_docentes/".$model->id_profesor."/".$model->doc_curp;
+                    $ruta = "http://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_curp;
                     echo '
                      <div class="col-sm-1"></div>
                     <div class="col-sm-3">
@@ -75,7 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ';
                 }
                 if(strlen($model->doc_ine) > 0){
-                    $ruta = \Yii::getAlias('@web')."/docs_docentes/".$model->id_profesor."/".$model->doc_ine;
+                    $ruta = "http://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_ine;
                     echo '
                     <div class="col-sm-1"></div>
                     <div class="col-sm-3">
@@ -85,7 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ';
                 }
                 if(strlen($model->doc_rfc) > 0){
-                    $ruta = \Yii::getAlias('@web')."/docs_docentes/".$model->id_profesor."/".$model->doc_rfc;
+                    $ruta = "http://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_rfc;
                     echo '
                     <div class="col-sm-1"></div>
                     <div class="col-sm-3">
@@ -95,7 +95,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ';
                 }
                 if(strlen($model->doc_nss) > 0){
-                    $ruta = \Yii::getAlias('@web')."/docs_docentes/".$model->id_profesor."/".$model->doc_nss;
+                    $ruta = "http://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_nss;
                     echo '
                     <div class="col-sm-1"></div>
                     <div class="col-sm-3">
@@ -105,7 +105,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ';
                 }
                 if(strlen($model->doc_cedula) > 0){
-                    $ruta = \Yii::getAlias('@web')."/docs_docentes/".$model->id_profesor."/".$model->doc_cedula;
+                    $ruta = "http://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_cedula;
                     echo '
                     <div class="col-sm-1"></div>
                     <div class="col-sm-3">
@@ -115,7 +115,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ';
                 }
                 if(strlen($model->doc_titulo) > 0){
-                    $ruta = \Yii::getAlias('@web')."/docs_docentes/".$model->id_profesor."/".$model->doc_titulo;
+                    $ruta = "http://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_titulo;
                     echo '
                     <div class="col-sm-1"></div>
                     <div class="col-sm-3">
@@ -125,7 +125,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ';
                 }
                 if(strlen($model->doc_curriculum) > 0){
-                    $ruta = \Yii::getAlias('@web')."/docs_docentes/".$model->id_profesor."/".$model->doc_curriculum;
+                    $ruta = "http://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_curriculum;
                     echo '
                     <div class="col-sm-1"></div>
                     <div class="col-sm-3">
@@ -135,7 +135,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ';
                 }
                 if(strlen($model->doc_comp_domicilio) > 0){
-                    $ruta = \Yii::getAlias('@web')."/docs_docentes/".$model->id_profesor."/".$model->doc_comp_domicilio;
+                    $ruta = "http://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_comp_domicilio;
                     echo '
                     <div class="col-sm-1"></div>
                     <div class="col-sm-3">

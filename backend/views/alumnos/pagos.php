@@ -21,11 +21,11 @@ use kartik\widgets\DatePicker;
 $this->title = 'Pagos Alumnos';
 $this->params['breadcrumbs'][] = $this->title;
 
-
+$ruta = "http://controlescolar.universidadcidae.com.mx";
 $this->registerJs('
     
   function verComprobante(ruta){
-    $("#comp_img").html(\'<center><embed src="'.\Yii::getAlias('@web').'\'+ruta+\'" width="500" height="500"></center>\');
+    $("#comp_img").html(\'<center><embed src="'.$ruta.'\'+ruta+\'" width="500" height="500"></center>\');
     $("#myModal").modal("show");
 
   }
