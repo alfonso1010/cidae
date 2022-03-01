@@ -17,7 +17,6 @@ use yii\helpers\HtmlPurifier;
             		$ruta = \Yii::getAlias('@web')."/".$model->ruta_aviso;
                     echo '
                         <embed src="'.$ruta.'" width="500" height="500">
-                    
                     ';
         			?>	
         			</center>
