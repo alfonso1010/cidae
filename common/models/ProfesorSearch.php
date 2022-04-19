@@ -18,7 +18,7 @@ class ProfesorSearch extends Profesor
     {
         return [
             [['id_profesor', 'activo', 'edad'], 'integer'],
-            [['nombre', 'apellido_paterno', 'apellido_materno', 'cedula', 'direccion', 'telefono_celular', 'telefono_casa', 'sexo', 'email', 'fecha_alta', 'fecha_nacimiento'], 'safe'],
+            [['nombre', 'apellido_paterno', 'apellido_materno', 'cedula', 'direccion', 'telefono_celular', 'telefono_casa', 'sexo', 'email', 'fecha_alta', 'fecha_nacimiento','matricula'], 'safe'],
         ];
     }
 
@@ -66,6 +66,7 @@ class ProfesorSearch extends Profesor
 
         $query->andFilterWhere(['like', 'nombre', $this->nombre])
             ->andFilterWhere(['like', 'apellido_paterno', $this->apellido_paterno])
+            ->andFilterWhere(['like', 'matricula', $this->matricula])
             ->andFilterWhere(['like', 'apellido_materno', $this->apellido_materno])
             ->andFilterWhere(['like', 'cedula', $this->cedula])
             ->andFilterWhere(['like', 'direccion', $this->direccion])

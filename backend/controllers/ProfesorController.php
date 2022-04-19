@@ -91,7 +91,7 @@ class ProfesorController extends Controller
             $user_profesor->status = User::STATUS_ACTIVE;
             $user_profesor->id_responsable = $model->id_profesor;
             $user_profesor->tipo_responsable = 1;
-            $user_profesor->setPassword($model->cedula);
+            $user_profesor->setPassword($model->matricula);
             $user_profesor->generateAuthKey();
             $user_profesor->generatePasswordResetToken();
             
@@ -111,10 +111,12 @@ class ProfesorController extends Controller
                 $model->uploadFiles();
             }else{
                 //print_r($user_profesor->getFirstErrors());die();
+                $error = $user_profesor->getFirstErrors();
+                $error = reset($error);
                 $model->delete();
                 Yii::$app->session->setFlash(
                     'danger',
-                    'No se pudo crear el profesor, Contacte con el administrador.'
+                    'No se pudo crear el profesor, Error: <BR>'.$error
                 );
                 return $this->render('create', [
                     'model' => $model,
@@ -142,7 +144,7 @@ class ProfesorController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
              $user_profesor = User::findOne(['id_responsable' => $model->id_profesor,'tipo_responsable' => 1]);
             if(!is_null($user_profesor)){
-                $user_profesor->setPassword($model->cedula);
+                $user_profesor->setPassword($model->matricula);
                 $user_profesor->save();
                 //carga documentos
                 $model->file_acta = UploadedFile::getInstance($model, 'file_acta');

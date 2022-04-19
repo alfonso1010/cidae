@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $dia = Yii::$app->formatter->asDate('now', 'php:d');
 $habilita_registro_pago = false;
-if($dia < 3){
+if($dia < 6){
   $habilita_registro_pago = true;
 }
 

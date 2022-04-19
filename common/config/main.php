@@ -23,5 +23,20 @@ return [
             'dateFormat' => 'medium',
             'defaultTimeZone' => 'America/Mexico_City',
         ],
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            'viewPath' => '@common/mail',
+            //'useFileTransport' => true,
+            'useFileTransport' => false, //set this property to false to send mails to real email addresses
+            //comment the following array to send mail using php's mail function
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => 'mail.universidadcidae.com.mx',
+                'username' => 'errores@universidadcidae.com.mx',
+                'password' => '7h8j9k0l',
+                'port' => '26',
+                'encryption' => 'tls',
+            ],
+        ],
     ],
 ];

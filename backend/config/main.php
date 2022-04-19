@@ -37,6 +37,26 @@ return [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
                 ],
+                'email'    => [
+                    'class'   => 'yii\log\EmailTarget',
+                    'except'  => [
+                        'yii\web\HttpException:404', 
+                        'yii\log\Dispatcher::dispatch', 
+                        'yii\web\HttpException:401', 
+                        'yii\caching\FileCache::setValue', 
+                        'yii\i18n\PhpMessageSource::loadFallbackMessages',
+                        'yii\debug\Module::checkAccess'
+                    ],
+                    'levels'  => ['error', 'warning'],
+                    'message' => [
+                        'from'   => 'errores@universidadcidae.com.mx',
+                        'to'     => [
+                            'alfonsoarellanes42@gmail.com'
+                        ],
+                        'subject' => 'Error CIDAE'
+
+                    ],
+                ],
             ],
         ],
         'errorHandler' => [

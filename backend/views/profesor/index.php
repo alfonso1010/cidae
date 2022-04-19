@@ -28,6 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ['class' => 'yii\grid\SerialColumn'],
 
                     'id_profesor',
+                    'matricula',
                     'cedula',
                     'nombre',
                     'apellido_paterno',

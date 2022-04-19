@@ -43,7 +43,7 @@ $this->registerJs('
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <div class="col-sm-11">
+                <div class="col-sm-12">
                     <?php
                     $busca_dias_horario = HorariosProfesorMateria::find()
                       ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo'])
@@ -64,7 +64,7 @@ $this->registerJs('
                     }
                     $tabla = "";
                     if($horario_escolarizado){
-                      $tabla .= '
+                      $tabla .= '<div class="table-responsive">
                       <table class="table">
                           <tbody>
                               <tr >
@@ -73,7 +73,6 @@ $this->registerJs('
                                   <th style="border:1px solid #252525;">Martes</th>
                                   <th style="border:1px solid #252525;">Miércoles</th>
                                   <th style="border:1px solid #252525;">Jueves</th>
-                                  <th style="border:1px solid #252525;">Viernes</th>
                               </tr>';
                           $hora_inicio = "07:00"; 
                           for ($i=1; $i < 4; $i++) {
@@ -188,31 +187,7 @@ $this->registerJs('
                                         $tabla .='RECESO'; 
                                     }
                                   $tabla .= "
-                                  </td>
-                                  <td style='white-space: nowrap;border:1px solid #252525;'>";
-                                    $busca_horario = HorariosProfesorMateria::find()
-                                    ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo','grupos.generacion'])
-                                    ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
-                                    ->where([
-                                      'horarios_profesor_materia.dia_semana' => 5,
-                                      'horarios_profesor_materia.hora_inicio' => $hora_inicio,
-                                      'horarios_profesor_materia.hora_fin' => $hora_fin,
-                                      'horarios_profesor_materia.id_grupo' => $busca_alumno->id_grupo,
-                                    ])->asArray()->all();
-                                    if(!empty($busca_horario)){
-                                      foreach ($busca_horario as $key => $horario) {
-                                        $tabla .= '
-                                        <div style="margin:7px;width: min-contentmargin:7px;;border:1px solid #092F87; border-radius: 10px;box-shadow: 0px 10px 10px -6px black;padding: 5px;">
-                                          <p>
-                                            <b style="color:#092f87">Materia:</b> <b style="color:black">'.$horario['nombre_materia'].'</b>
-                                          </p>
-                                        </div>';
-                                      }
-                                    }else{
-                                        $tabla .='RECESO'; 
-                                    }
-                                  $tabla .= "
-                                  </td>
+                                </td>
                               </tr>
                               ";   
                             $hora_inicio = $hora_fin;                  
@@ -220,7 +195,63 @@ $this->registerJs('
                           
                       $tabla .= "
                           </tbody>
-                      </table>";
+                      </table></div>";
+                      $tabla .= "<br>";
+                        $tabla .= '<table class="table">
+                            <tbody>
+                                <tr>
+                                    <th style="border:1px solid #252525;">Hora</th>
+                                    <th style="border:1px solid #252525;">Viernes</th>
+                                </tr>';
+                        $hora_inicio = "07:00"; 
+                        for ($i=1; $i < 6; $i++) {
+                          if($i == 3){
+                              $suma_hora = strtotime ( '+30 minute' , strtotime ($hora_inicio) ) ;
+                          }else{
+                              $suma_hora = strtotime ( '+1 hour' , strtotime ($hora_inicio) ) ; 
+                          }
+                          $hora_fin = date ('H:i', $suma_hora); 
+
+                          if($i%2 == 0){
+                            $tabla .= "<tr style='background-color:white'>";
+                          }else{
+                            $tabla .= "<tr style='background-color:#c2c2c2'>";
+                          }
+                          $tabla .= "
+                              <td  style='white-space: nowrap;border:1px solid #252525;'> 
+                                  <b style='color: #092f87' >".$hora_inicio." - ".$hora_fin."</b>
+                              </td>
+                              <td style='white-space: nowrap;border:1px solid #252525;'>";
+                                $busca_horario = HorariosProfesorMateria::find()
+                                ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo','grupos.generacion'])
+                                ->innerJoin( 'grupos','horarios_profesor_materia.id_grupo = grupos.id_grupo')
+                                ->where([
+                                  'horarios_profesor_materia.dia_semana' => 5,
+                                  'horarios_profesor_materia.hora_inicio' => $hora_inicio,
+                                  'horarios_profesor_materia.hora_fin' => $hora_fin,
+                                  'horarios_profesor_materia.id_grupo' => $busca_alumno->id_grupo,
+                                ])->asArray()->all();
+                                if(!empty($busca_horario)){
+                                  foreach ($busca_horario as $key => $horario) {
+                                    $tabla .= '
+                                    <div style="margin:7px;width: min-contentmargin:7px;;border:1px solid #092F87; border-radius: 10px;box-shadow: 0px 10px 10px -6px black;padding: 5px;">
+                                      <p>
+                                        <b style="color:#092f87">Materia:</b> <b style="color:black">'.$horario['nombre_materia'].'</b>
+                                      </p>
+                                    </div>';
+                                  }
+                                }else{
+                                    $tabla .='RECESO'; 
+                                }
+                          $hora_inicio = $hora_fin; 
+                        }
+                            $tabla .= "
+                            </td>
+                          </tr>
+                          ";   
+                        $tabla .= "
+                            </tbody>
+                        </table>";
                     }
                     if($horario_sabatino){
                        $tabla .= '<h4> Horario Sabatino </h4>

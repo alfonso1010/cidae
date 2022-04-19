@@ -76,6 +76,7 @@ class ProfesoresController extends Controller
         $busca_grupo = Grupos::findOne($grupo['id_grupo']);
         if(!is_null($busca_grupo)){
           $semestre_bloque = \common\helpers\UtilidadesHelper::calculaSemestreBloque($busca_grupo);
+          //print_r($semestre_bloque);die();
           if(!is_null($semestre_bloque)){
             $grupo['semestre_actual'] = $semestre_bloque['semestre'];
             $grupo['bloque_actual'] = $semestre_bloque['bloque'];

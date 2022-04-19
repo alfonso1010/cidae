@@ -23,6 +23,13 @@ use kartik\widgets\Select2;
              <div class="row">
                 <div class="col-xs-12">
                     <div class="col-sm-4">
+                        <?= $form->field($model, 'matricula')->textInput(['maxlength' => true])?>
+                    </div>
+                </div>
+            </div> 
+             <div class="row">
+                <div class="col-xs-12">
+                    <div class="col-sm-4">
                         <?= $form->field($model, 'cedula')->textInput(['maxlength' => true])?>
                     </div>
                     <div class="col-sm-4">

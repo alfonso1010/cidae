@@ -115,7 +115,6 @@ class HorariosController extends Controller
                                 <th>Martes</th>
                                 <th>Miércoles</th>
                                 <th>Jueves</th>
-                                <th>Viernes</th>
                             </tr>';
                         $hora_inicio = "07:00"; 
                         for ($i=1; $i < 4; $i++) {
@@ -274,11 +273,40 @@ class HorariosController extends Controller
                                         $tabla .= "
                                     </select>
                                 </td>
-                                 <td>
+                            </tr>
+                            ";    
+                            $hora_inicio = $hora_fin;                 
+                        }
+                        
+                    $tabla .= "
+                        </tbody>
+                    </table>";
+                    $tabla .= "<br>";
+                    $tabla .= '
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th>Hora</th>
+                                <th>Viernes</th>
+                            </tr>';
+                        $hora_inicio = "07:00"; 
+                        for ($i=1; $i < 6; $i++) {
+                            if($i == 3){
+                                $suma_hora = strtotime ( '+30 minute' , strtotime ($hora_inicio) ) ;
+                            }else{
+                                $suma_hora = strtotime ( '+1 hour' , strtotime ($hora_inicio) ) ; 
+                            }
+                            $hora_fin = date ('H:i', $suma_hora); 
+                            $tabla .= "
+                            <tr>
+                                <td width='120px'> 
+                                    <b style='color: #092f87' >".$hora_inicio." - ".$hora_fin."</b>
+                                </td>
+                                <td >
                                     <select onChange='seleccionados(5,\"".$hora_inicio."\",\"".$hora_fin."\",this)' class='form-control'>
                                         <option value='0'> Seleccione </option>
                                         ";
-                                        if($i == 2){
+                                        if($i == 3){
                                             $tabla .= "<option selected='true' value='libre'> RECESO </option>";
                                         }else{
                                             foreach ($profesores as $key => $profesor) {
