@@ -408,7 +408,7 @@ class ProfesoresController extends Controller
       if(!empty($calificaciones) && !is_null($busca_materia) && !is_null($busca_profesor) && $semestre > 0 && $bloque > 0 && $id_grupo > 0  ){
         foreach ($calificaciones as $key => $calificacion) {
           $array_alumno = explode("-", $calificacion['id_alumno']);
-          if(isset($array_alumno[0]) && isset($array_alumno[1]) ){
+          if(isset($array_alumno[0]) && isset($array_alumno[1]) && $calificacion['calificacion'] > 1 ){
             $numero_evaluacion = $array_alumno[0];
             $id_alumno = $array_alumno[1];
             $busca_calificacion = CalificacionAlumno::findOne([
@@ -670,6 +670,7 @@ class ProfesoresController extends Controller
      */
     public function actionBuscamaterias($id)
     {
+      $txt = "";
       $id_profesor = Yii::$app->user->identity->id_responsable;
       $lista_materias = HorariosProfesorMateria::find()
       ->select(['horarios_profesor_materia.*','grupos.nombre as nombre_grupo'])
@@ -681,16 +682,18 @@ class ProfesoresController extends Controller
       ->andWhere(['materias.activo' => 0])
       ->groupBy(['horarios_profesor_materia.id_materia'])->asArray()->all();
       if(!empty($lista_materias)){
-          echo "<option value=''> Seleccione Materia ...</option>";
+          $txt .= "<option value=''> Seleccione Materia ...</option>";
           foreach ($lista_materias as $key => $materia) {
-              echo "<option value='".$materia['id_materia']."'>".$materia['nombre_materia']."</option>";
+              $txt .= "<option value='".$materia['id_materia']."'>".$materia['nombre_materia']."</option>";
           }
       }else{
-          echo "<option value=''> No hay Materias ...</option>";
+          $txt .= "<option value=''> No hay Materias ...</option>";
       }
+      return $txt;
     }
 
     public function actionBuscasemestremateria(){
+      $txt = "";
       $id_profesor = Yii::$app->user->identity->id_responsable;
       $datos = Yii::$app->request->get();
       $id_grupo = ArrayHelper::getValue($datos, 'id_grupo', 0);
@@ -703,13 +706,14 @@ class ProfesoresController extends Controller
         ])
         ->groupBy(['semestre'])->all();
       if(!empty($busca_semestre)){
-        echo "<option value=''>Seleccione Semestre ...</option>";
+        $txt .= "<option value=''>Seleccione Semestre ...</option>";
         foreach ($busca_semestre as $key => $value) {
-          echo "<option value='".$value->semestre."'> Semestre ".$value->semestre."</option>";
+          $txt .= "<option value='".$value->semestre."'> Semestre ".$value->semestre."</option>";
         }
       }else{
-        echo "<option value=''> No hay semestres ...</option>";
+        $txt .= "<option value=''> No hay semestres ...</option>";
       }
+      return $txt;
     }
 
      /**
@@ -718,15 +722,17 @@ class ProfesoresController extends Controller
      */
     public function actionBuscasemestre($id)
     {
+      $txt = "";
       $semestres_grupo = HorariosProfesorMateria::find()->where(['id_grupo' => $id])->groupBy(['semestre','id_grupo'])->all();
       if(!empty($semestres_grupo)){
-        echo "<option value=''>Seleccione Semestre ...</option>";
+        $txt .= "<option value=''>Seleccione Semestre ...</option>";
         foreach ($semestres_grupo as $key => $value) {
-          echo "<option value='".$value->semestre."'> Semestre ".$value->semestre."</option>";
+          $txt .= "<option value='".$value->semestre."'> Semestre ".$value->semestre."</option>";
         }
       }else{
-        echo "<option value=''> No hay semestres ...</option>";
+        $txt .= "<option value=''> No hay semestres ...</option>";
       }
+      return $txt;
     }
 
       /**

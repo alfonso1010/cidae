@@ -151,16 +151,18 @@ class MateriasController extends Controller
 
     public function actionBuscasemestre($id)
     {
+        $txt_semestre = "";
         $carrera = Carreras::findOne($id);   
         if(!is_null($carrera)){
-            echo "<option value=''>Seleccione Semestre ...</option>";
+            $txt_semestre .= "<option value=''>Seleccione Semestre ...</option>";
             for ($i=0; $i < $carrera->total_periodos ; $i++) { 
                 $s = $i+1;
-                echo "<option value='".$s."'> Semestre ".$s."</option>";
+                $txt_semestre .= "<option value='".$s."'> Semestre ".$s."</option>";
             }
         }else{
-            echo "<option value=''> No hay semestres ...</option>";
+            $txt_semestre .= "<option value=''> No hay semestres ...</option>";
         }
+        return $txt_semestre;
     }
 
     /**

@@ -63,15 +63,17 @@ class HorariosController extends Controller
      */
     public function actionBuscagrupos($id)
     {
+        $txt_grupos = "":
         $grupos = Grupos::find()->select(["id_grupo",'nombre'])->where(['id_carrera' => $id,'activo' => 0])->all();
-        echo "<option value=''>Seleccione Grupo ...</option>";
+        $txt_grupos .= "<option value=''>Seleccione Grupo ...</option>";
         if(!empty($grupos)){
             foreach ($grupos as $key => $grupo) {
-                echo "<option value='".$grupo->id_grupo."'>".$grupo->nombre."</option>";
+                $txt_grupos .= "<option value='".$grupo->id_grupo."'>".$grupo->nombre."</option>";
             }
         }else{
-            echo "<option value=''> No hay grupos ...</option>";
+            $txt_grupos .= "<option value=''> No hay grupos ...</option>";
         }
+        return $txt_grupos;
     }
 
     /**
