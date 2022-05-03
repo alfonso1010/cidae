@@ -63,7 +63,7 @@ class HorariosController extends Controller
      */
     public function actionBuscagrupos($id)
     {
-        $txt_grupos = "":
+        $txt_grupos = "";
         $grupos = Grupos::find()->select(["id_grupo",'nombre'])->where(['id_carrera' => $id,'activo' => 0])->all();
         $txt_grupos .= "<option value=''>Seleccione Grupo ...</option>";
         if(!empty($grupos)){

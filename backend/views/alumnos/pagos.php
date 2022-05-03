@@ -21,7 +21,7 @@ use kartik\widgets\DatePicker;
 $this->title = 'Pagos Alumnos';
 $this->params['breadcrumbs'][] = $this->title;
 
-$ruta = "http://controlescolar.universidadcidae.com.mx";
+$ruta = "https://controlescolar.universidadcidae.com.mx";
 $this->registerJs('
     
   function verComprobante(ruta){
@@ -44,6 +44,20 @@ $this->registerJs('
                   'dataProvider' => $dataProvider,
                   'filterModel' => $searchModel,
                   'columns' => [
+                    [
+                      'attribute' => 'nombre_alumno',
+                      'filter'=>false,
+                      'contentOptions' => ['style' => 'width:20%; white-space: normal;'],
+                      'value' => function($model){
+                        return $model->alumno->nombre.' '.$model->alumno->apellido_paterno.' '.$model->alumno->apellido_materno;
+                      }
+                    ],
+                    [
+                      'attribute' => 'matricula',
+                      'value' => function($model){
+                        return $model->alumno->matricula;
+                      }
+                    ],
                     'fecha_pago',
                     'monto_pago',
                     'concepto_pago',

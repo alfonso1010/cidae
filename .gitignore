@@ -37,3 +37,6 @@ phpunit.phar
 # vagrant runtime
 /.vagrant
 backend/runtime
+backend/web/avisos
+backend/web/biblioteca
+backend/web/docs_alumnos

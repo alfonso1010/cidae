@@ -76,6 +76,9 @@ class SiteController extends Controller
             case 'alumno':
                 return $this->redirect(["alumno/principal"]);
                 break;
+            case 'coordinador':
+                return $this->redirect(["avisos/index"]);
+                break;
             default:
                 Yii::$app->user->logout();
                 return $this->goHome();
@@ -111,6 +114,9 @@ class SiteController extends Controller
                     break;
                 case 'alumno':
                     return $this->redirect(["alumno/principal"]);
+                    break;
+                case 'coordinador':
+                    return $this->redirect(["avisos/index"]);
                     break;
                 default:
                     Yii::$app->user->logout();

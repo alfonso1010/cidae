@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <?php
                 if(strlen($model->ruta_aviso) > 0){
-                    $ruta = "http://controlescolar.universidadcidae.com.mx".$model->ruta_aviso;
+                    $ruta = "https://controlescolar.universidadcidae.com.mx".$model->ruta_aviso;
                     echo '
                     <div class="col-sm-1"></div>
                     <div class="col-sm-3">

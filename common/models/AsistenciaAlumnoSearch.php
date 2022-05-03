@@ -142,4 +142,79 @@ class AsistenciaAlumnoSearch extends AsistenciaAlumno
 
         return $dataProvider;
     }
+
+     /**
+     * Creates data provider instance with search query applied
+     *
+     * @param array $params
+     *
+     * @return ActiveDataProvider
+     */
+    public function searchAsistenciasGrupo($params,$id_grupo = 0,$semestre = 0,$bloque = 0)
+    {
+        if($id_grupo == 0){
+            $query = AsistenciaAlumno::find()->where(['id_grupo' => 0]);
+            $dataProvider = new ActiveDataProvider([
+                'query' => $query,
+            ]);
+            return $dataProvider;
+        }
+        $query = AsistenciaAlumno::find()
+        ->select(['asistencia_alumno.*','grupos.nombre as nombre_grupo'])
+        ->innerJoin('grupos', 
+                    'asistencia_alumno.id_grupo = grupos.id_grupo');
+        if($id_grupo > 0){
+            $query = $query->andWhere(['asistencia_alumno.id_grupo' => $id_grupo]);
+        }
+        if($semestre > 0){
+            $query = $query->andWhere(['asistencia_alumno.semestre' => $semestre]);
+        }
+        if($bloque > 0){
+            $query = $query->andWhere(['asistencia_alumno.bloque' => $bloque]);
+        }
+        $query = $query
+        ->andWhere(['grupos.activo' => 0])
+        ->orderBy(['asistencia_alumno.fecha_asistencia'=>SORT_DESC])
+        ->groupBy(['fecha_asistencia','id_materia','id_profesor','id_grupo','semestre','bloque']);
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'id_asistencia_alumno' => $this->id_asistencia_alumno,
+            'asistio' => $this->asistio,
+            'fecha_asistencia' => $this->fecha_asistencia,
+            'hora_asistencia' => $this->hora_asistencia,
+            'fecha_alta' => $this->fecha_alta,
+            'id_alumno' => $this->id_alumno,
+            'id_materia' => $this->id_materia,
+            'id_profesor' => $this->id_profesor,
+            'id_grupo' => $this->id_grupo,
+            'semestre' => $this->semestre,
+            'bloque' => $this->bloque,
+        ]);
+
+        $query->andFilterWhere(['like', 'nombre_materia', $this->nombre_materia])
+            ->andFilterWhere(['like', 'nombre_profesor', $this->nombre_profesor]);
+
+        if($this->nombre_grupo != "" ){
+            $query->andFilterWhere(['and',
+                ['like', 'grupos.nombre',(!is_null($this->nombre_grupo))?$this->nombre_grupo:"%"],
+             ]);
+        }
+
+        return $dataProvider;
+    }
 }

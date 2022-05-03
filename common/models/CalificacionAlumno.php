@@ -78,4 +78,14 @@ class CalificacionAlumno extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Alumnos::className(), ['id_alumno' => 'id_alumno']);
     }
+
+    /**
+     * Gets query for [[Alumno]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getGrupo()
+    {
+        return $this->hasOne(Grupos::className(), ['id_grupo' => 'id_grupo']);
+    }
 }

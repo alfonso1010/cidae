@@ -1,0 +1,33 @@
+generar reportes de asistencia y calificacion coordinador
+AGREGAR reporte de asistencias y calificaciones admin
+Catalogo de formatos para alumnos y docentes - 
+Agregar Temario por materia Y LO PODRA VER DOCENTE Y COORDINADOR
+pintar calificacion de rojo si es menor a 7
+acceso a archivos de comprobante de pago
+agregar campo folio y/o autorizacion  en pagos alumnos 10 numerico -- listo
+Control de pagos solo opcion de colegiatura , incripcion y/o reinscripcion, gastos administrativos -- LISTO
+agregar nombre y matricula de alumnos a pagos -- LISTO
+revisar portada de libros -- LISTO
+
+--- pasos--
+
+ALTER TABLE `pagos_alumno` ADD `folio_autorizacion` VARCHAR(45) NOT NULL AFTER `concepto_pago`;
+INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `created_at`, `updated_at`) VALUES ('coordinador', '1', 'Rol de coordinador', NULL, NULL, NULL, NULL);
+INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `created_at`, `updated_at`) VALUES ('/reportes/asistencias', '2', NULL, NULL, NULL, NULL, NULL), ('/reportes/calificaciones', '2', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `created_at`, `updated_at`) VALUES ('/reportes/*', '2', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `auth_item_child` (`parent`, `child`) VALUES ('admin', '/reportes/*');
+INSERT INTO `menu` (`id`, `name`, `parent`, `route`, `order`, `data`) VALUES (NULL, '<i class=\"fa fa-group\"></i><span style=\"font-size:16px;\"> Reporte Asistencias </span>', NULL, '/reportes/asistencias', '22', NULL), (NULL, '<i class=\"fa fa-group\"></i><span style=\"font-size:16px;\"> Reporte Calificaciones </span>', NULL, '/reportes/calificaciones', '23', NULL);
+INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `created_at`, `updated_at`) VALUES ('/profesores/verasistencias', '2', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `auth_item_child` (`parent`, `child`) VALUES ('admin', '/profesores/verasistencias');
+
+-- PROFESOR--
+claus_1410@hotmail.com
+UCDOCENTE01
+
+ASISTENCIA
+- PODER EDITAR ASISTENCIA 2 DIAS HABILES
+CALIFICACIONES
+- PODER AGREGAR CALIFICACION EXTRAORDINARIA SI SU PROMEDIO ES MENOR A 7
+
+- EMITIR NOTIFICACIONES COORDINADOR Y ADMIN A ALUMNOS O A PROFESORES, O UN GRUPO EN PARTICULAR Y LAS NOTIFICACIONES SOLO SE VUSUALIZAN
+

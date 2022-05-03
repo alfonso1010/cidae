@@ -44,12 +44,13 @@ class PagosAlumno extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['fecha_pago', 'monto_pago', 'concepto_pago', 'tipo_pago', 'id_alumno'], 'required'],
+            [['fecha_pago', 'monto_pago', 'concepto_pago', 'tipo_pago', 'id_alumno','folio_autorizacion'], 'required'],
             [['fecha_pago', 'fecha_alta', 'fecha_actualizacion'], 'safe'],
             [['estatus_pago', 'tipo_pago', 'id_alumno'], 'integer'],
             [['ruta_recibo'], 'string'],
             [['file_recibo'], 'required', 'message'=>'Comprobante escaneado no puede estar vacío'],
             [['monto_pago'], 'string', 'max' => 45],
+            [['folio_autorizacion'], 'string', 'max' => 10],
             [['concepto_pago'], 'string', 'max' => 255],
             [['id_alumno'], 'exist', 'skipOnError' => true, 'targetClass' => Alumnos::className(), 'targetAttribute' => ['id_alumno' => 'id_alumno']],
             [['file_recibo'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, pdf'],

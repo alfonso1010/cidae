@@ -30,9 +30,27 @@ $this->registerCss(<<<CSS
     .skin-green .sidebar a{
         color: white
     }
+    .skin-green .sidebar-menu>li>.treeview-menu{
+        color: #252525
+    }
 CSS
 
 );
+
+$this->registerJs('
+    $( document ).ready(function() {
+
+        $("li").each(function(){
+        // this is inner scope, in reference to the .phrase element
+            var li = $(this);
+            $(this).find("ul").each(function(){
+                li.addClass("treeview");
+            });
+        });
+        
+       
+    });
+');
 
 if (Yii::$app->controller->action->id === 'login') { 
 /**

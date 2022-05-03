@@ -15,7 +15,7 @@ use yii\helpers\HtmlPurifier;
             		<center>
             		<?php
             		$ruta = \Yii::getAlias('@web')."/".$model->ruta_aviso;
-                    $ruta = "http://controlescolar.universidadcidae.com.mx";
+                    $ruta = "https://controlescolar.universidadcidae.com.mx";
                     echo '
                         <embed src="'.$ruta.'" width="500" height="500">
                     ';

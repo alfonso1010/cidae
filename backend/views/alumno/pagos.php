@@ -55,7 +55,11 @@ if($habilita_registro_pago){
         <div class="col-xs-12">
           <div class="col-sm-4">
                <?= $form->field($modelPagos, 'tipo_pago')->widget(Select2::classname(), [
-                  'data' => [0 => "Incripción", 1=> "Reinscripción"],
+                  'data' => [
+                    0 => "Incripción/Reinscripción", 
+                    1=> "Colegiatura",
+                    2=> "Gastos Administrativos"
+                  ],
                   'options' => ['placeholder' => 'Seleccione Tipo Pago'],
                   'pluginOptions' => [
                       'allowClear' => true
@@ -92,6 +96,9 @@ if($habilita_registro_pago){
             <?= $form->field($modelPagos, 'concepto_pago')->textInput(['maxlength' => true]) ?>
         </div>
         <div class="col-sm-4">
+            <?= $form->field($modelPagos, 'folio_autorizacion')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-sm-4">
           <br>
           <?= $form->field($modelPagos, 'file_recibo')->fileInput()->label("Recibo de Pago (Escaneado)"); ?>
         </div>
@@ -125,6 +132,7 @@ if($habilita_registro_pago){
                   'fecha_pago',
                   'monto_pago',
                   'concepto_pago',
+                  'folio_autorizacion',
                    [
                       'attribute' => 'estatus_pago',
                       'label' => 'Estatus Pago',

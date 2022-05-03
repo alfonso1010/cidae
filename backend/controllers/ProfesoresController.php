@@ -308,8 +308,9 @@ class ProfesoresController extends Controller
             $promedio = floor($promedio);
             $promedio = number_format($promedio, 2, '.', '');
           }
+          $background = (is_numeric($promedio) && $promedio < 7)?"#F76969":"white";
           $alumnos .= 
-          "<tr>
+          "<tr style='background:".$background.";  ' >
             <td  style='white-space: nowrap;border:1px solid #252525;'> 
               <b style='color: #252525;' >".$alumno->matricula."</b>
             </td>
@@ -448,10 +449,7 @@ class ProfesoresController extends Controller
               $inserta_calificacion->nombre_materia = $busca_materia->nombre;
               $inserta_calificacion->nombre_profesor = $busca_profesor->nombreCompleto;
               $inserta_calificacion->save(false);
-              $data = [
-                "code" => 200,
-                "mensaje" => "Éxito",
-              ];
+              
             }
           }else{
             $data = [
@@ -460,9 +458,12 @@ class ProfesoresController extends Controller
             ];
             return json_encode($data);
           }
-         
         }
-        
+        $data = [
+          "code" => 200,
+          "mensaje" => "Éxito",
+        ];
+        return json_encode($data);
       }else{
         $data = [
             "code" => 422,

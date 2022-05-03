@@ -93,8 +93,9 @@ $this->registerJs('
                             $promedio = floor($promedio);
                             $promedio = number_format($promedio, 2, '.', '');
                         }
+                        $background = (is_numeric($promedio) && $promedio < 7)?"#F76969":"white";
                         $tabla .= 
-                        "<tr>
+                        "<tr style='background:".$background."'>
                             <td  style='border:1px solid #252525;width:200px;'> 
                               <b style='color: #252525;' >".$materia['nombre_materia']."</b>
                             </td>

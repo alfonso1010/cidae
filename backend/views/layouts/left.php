@@ -6,6 +6,7 @@ use yii\widgets\Menu;
 use yii\helpers\ArrayHelper;
 
 $menu = MenuHelper::getAssignedMenu(Yii::$app->user->id);
+//print_r($menu);die();
 
 ?>
 <aside class="main-sidebar">
@@ -26,11 +27,13 @@ $menu = MenuHelper::getAssignedMenu(Yii::$app->user->id);
 
         <?= 
         Menu::widget([
-            'options'         => ['class'         => 'nav nav-sidebar'],
+            'options'         => ['class' => 'sidebar-menu','data-widget'=> "tree"], 
+            //'firstItemCssClass' => 'treeview',
+            //'itemOptions'     => ['class' => 'treeview'],
             'activateParents' => true,
             'encodeLabels'    => false,
-            'linkTemplate'    => '<a href="{url}" class="nav-link"><span>{label}</span></a>',
-            'submenuTemplate' => '<ul class="sub-menu">{items}</ul>',
+            'linkTemplate'    => '<a href="{url}" class="treeview"><span>{label}</span></a>',
+            'submenuTemplate' => '<ul class="treeview-menu">{items}</ul>',
             'items'           => $menu
         ]);
         ?>

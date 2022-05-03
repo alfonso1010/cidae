@@ -57,8 +57,8 @@ use yii\helpers\HtmlPurifier;
             	</div>
             	<div class="col-sm-6">
             		<?php
-            		$ruta = \Yii::getAlias('@web')."/".$model->imagen_portada;
-            		$ruta = "http://controlescolar.universidadcidae.com.mx";
+            		//$ruta = \Yii::getAlias('@web')."/".$model->imagen_portada;
+            		$ruta = "https://controlescolar.universidadcidae.com.mx"."/".$model->imagen_portada;
                     echo '
                     <div class="col-sm-3">
                         <embed src="'.$ruta.'" width="200" height="300">

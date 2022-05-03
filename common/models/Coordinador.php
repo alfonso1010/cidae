@@ -1,0 +1,222 @@
+<?php
+
+namespace common\models;
+
+use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
+
+/**
+ * This is the model class for table "coordinador".
+ *
+ * @property int $id_coordinador
+ * @property string $matricula
+ * @property string $nombre
+ * @property string $apellido_paterno
+ * @property string $apellido_materno
+ * @property string $cedula
+ * @property string|null $direccion
+ * @property string $telefono_celular
+ * @property string|null $telefono_casa
+ * @property string $sexo
+ * @property string|null $email
+ * @property string $fecha_alta
+ * @property int $activo
+ * @property int|null $edad
+ * @property string|null $fecha_nacimiento
+ * @property string $curp
+ * @property string $rfc
+ * @property string $nss
+ * @property string $grado_academico
+ * @property string|null $doc_acta_nacimiento
+ * @property string|null $doc_curp
+ * @property string|null $doc_ine
+ * @property string|null $doc_comp_domicilio
+ * @property string|null $doc_rfc
+ * @property string|null $doc_nss
+ * @property string|null $doc_titulo
+ * @property string|null $doc_cedula
+ * @property string|null $doc_curriculum
+ */
+class Coordinador extends \yii\db\ActiveRecord
+{
+
+    public $file_acta;
+    public $file_curp;
+    public $file_ine;
+    public $file_comp_domi;
+    public $file_rfc;
+    public $file_nss;
+    public $file_titulo;
+    public $file_cedula;
+    public $file_cv;
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return 'coordinador';
+    }
+
+
+    public function behaviors()
+    {
+        return array_merge(parent::behaviors(), [
+            
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'value' => new Expression('now()'),
+                'createdAtAttribute' => 'fecha_alta',
+                'updatedAtAttribute' => 'fecha_alta',
+            ],
+        ]);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['matricula', 'nombre', 'apellido_paterno', 'apellido_materno', 'cedula', 'telefono_celular', 'sexo', 'curp', 'rfc', 'nss', 'grado_academico','grupos','email'], 'required'],
+            [['direccion'], 'string'],
+            [['fecha_alta'], 'safe'],
+            [['activo', 'edad'], 'integer'],
+            [['matricula', 'cedula', 'email', 'curp', 'rfc', 'nss'], 'string', 'max' => 100],
+            [['nombre', 'apellido_paterno', 'apellido_materno', 'telefono_celular', 'telefono_casa', 'fecha_nacimiento'], 'string', 'max' => 45],
+            [['matricula'], 'string', 'max' => 11],
+            [['sexo'], 'string', 'max' => 10],
+            [['grado_academico'], 'string', 'max' => 200],
+            [['doc_acta_nacimiento', 'doc_curp', 'doc_ine', 'doc_comp_domicilio', 'doc_rfc', 'doc_nss', 'doc_titulo', 'doc_cedula', 'doc_curriculum'], 'string', 'max' => 255],
+            [['cedula', 'email'], 'string', 'max' => 100],
+            [['sexo'], 'string', 'max' => 10],
+            [['curp'], 'string', 'max' => 18],
+            [['curp'], 'string', 'min' => 18],
+            [['rfc'], 'string', 'max' => 13],
+            [['rfc'], 'string', 'min' => 13],
+            [['telefono_casa'], 'string', 'max' => 10],
+            [['telefono_casa'], 'string', 'min' => 10],
+            [['telefono_celular'], 'string', 'max' => 10],
+            [['telefono_celular'], 'string', 'min' => 10],
+            [['file_acta','file_curp','file_ine','file_comp_domi','file_rfc','file_nss','file_titulo','file_cedula','file_cv'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, pdf'],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id_coordinador' => 'Id Coordinador',
+            'matricula' => 'Matricula',
+            'nombre' => 'Nombre',
+            'apellido_paterno' => 'Apellido Paterno',
+            'apellido_materno' => 'Apellido Materno',
+            'cedula' => 'Cedula',
+            'direccion' => 'Direccion',
+            'telefono_celular' => 'Telefono Celular',
+            'telefono_casa' => 'Telefono Casa',
+            'sexo' => 'Sexo',
+            'email' => 'Email',
+            'fecha_alta' => 'Fecha Alta',
+            'activo' => 'Activo',
+            'edad' => 'Edad',
+            'fecha_nacimiento' => 'Fecha Nacimiento',
+            'curp' => 'Curp',
+            'rfc' => 'Rfc',
+            'nss' => 'Nss',
+            'grado_academico' => 'Grado Academico',
+            'doc_acta_nacimiento' => 'Doc Acta Nacimiento',
+            'doc_curp' => 'Doc Curp',
+            'doc_ine' => 'Doc Ine',
+            'doc_comp_domicilio' => 'Doc Comp Domicilio',
+            'doc_rfc' => 'Doc Rfc',
+            'doc_nss' => 'Doc Nss',
+            'doc_titulo' => 'Doc Titulo',
+            'doc_cedula' => 'Doc Cedula',
+            'doc_curriculum' => 'Doc Curriculum',
+        ];
+    }
+
+     public function uploadPath() {
+        $path = \Yii::getAlias('@webroot')."/docs_coordinador/".$this->id_coordinador."/";
+        if(!file_exists($path)){
+            mkdir($path,0777);
+        }
+        if (!file_exists($path."index.html") ){ 
+            $fp = fopen($path."index.html","w+"); 
+        }
+        return $path;
+    }
+
+    public function uploadFiles() {
+        if(!is_null($this->file_acta)){
+            $path_acta = $this->uploadPath() ."acta_". $this->id_coordinador . "." .$this->file_acta->extension;
+            $this->file_acta->saveAs($path_acta, false);
+            $this->doc_acta_nacimiento = "acta_".$this->id_coordinador . "." .$this->file_acta->extension;
+            $this->save();
+        }
+        if(!is_null($this->file_curp)){
+            $path_curp = $this->uploadPath() . "curp_".$this->id_coordinador . "." .$this->file_curp->extension;
+            $this->file_curp->saveAs($path_curp, false);
+            $this->doc_curp = "curp_".$this->id_coordinador . "." .$this->file_curp->extension;
+            $this->save();
+        }
+        if(!is_null($this->file_ine)){
+            $path_ine = $this->uploadPath() . "ine_".$this->id_coordinador . "." .$this->file_ine->extension;
+            $this->file_ine->saveAs($path_ine, false);
+            $this->doc_ine = "ine_".$this->id_coordinador . "." .$this->file_ine->extension;
+            $this->save();
+        }
+        if(!is_null($this->file_comp_domi)){
+            $path_comp = $this->uploadPath() . "comp_domi_".$this->id_coordinador . "." .$this->file_comp_domi->extension;
+            $this->file_comp_domi->saveAs($path_comp, false);
+            $this->doc_comp_domicilio = "comp_domi_".$this->id_coordinador . "." .$this->file_comp_domi->extension;
+            $this->save();
+        }
+        if(!is_null($this->file_rfc)){
+            $path_rfc = $this->uploadPath() . "rfc_".$this->id_coordinador . "." .$this->file_rfc->extension;
+            $this->file_rfc->saveAs($path_rfc, false);
+            $this->doc_rfc = "rfc_".$this->id_coordinador . "." .$this->file_rfc->extension;
+            $this->save();
+        }
+        if(!is_null($this->file_nss)){
+            $path_nss = $this->uploadPath() . "nss_".$this->id_coordinador . "." .$this->file_nss->extension;
+            $this->file_nss->saveAs($path_nss, false);
+            $this->doc_nss = "nss_".$this->id_coordinador . "." .$this->file_nss->extension;
+            $this->save();
+        }
+        if(!is_null($this->file_cedula)){
+            $path_cedula = $this->uploadPath() . "cedula_".$this->id_coordinador . "." .$this->file_cedula->extension;
+            $this->file_cedula->saveAs($path_cedula, false);
+            $this->doc_cedula = "cedula_".$this->id_coordinador . "." .$this->file_cedula->extension;
+            $this->save();
+        }
+        if(!is_null($this->file_titulo)){
+            $path_titulo = $this->uploadPath() . "titulo_".$this->id_coordinador . "." .$this->file_titulo->extension;
+            $this->file_titulo->saveAs($path_titulo, false);
+            $this->doc_titulo = "titulo_".$this->id_coordinador . "." .$this->file_titulo->extension;
+            $this->save();
+        }
+        if(!is_null($this->file_cv)){
+            $path_cv = $this->uploadPath() . "cv_".$this->id_coordinador . "." .$this->file_cv->extension;
+            $this->file_cv->saveAs($path_cv, false);
+            $this->doc_curriculum = "cv_".$this->id_coordinador . "." .$this->file_cv->extension;
+            $this->save();
+        }
+        return true;
+    }   
+
+     /**
+     * Funcion que concatena el nombre completo del alumno
+     * @return String Nombre completo del cliente
+     */
+    public function getNombreCompleto() {
+        return $this->nombre.' '
+        .$this->apellido_paterno.' '
+        .$this->apellido_materno;
+    }
+}

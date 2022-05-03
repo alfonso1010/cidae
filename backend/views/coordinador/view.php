@@ -4,14 +4,14 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Profesor */
+/* @var $model common\models\Coordinador */
 
 $this->title = $model->nombre." ".$model->apellido_paterno;
-$this->params['breadcrumbs'][] = ['label' => 'Profesors', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'coordinadores', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="profesor-view">
+<div class="coordinador-view">
      <div class="box box-primary">
         <div class="box-header with-border">
             <h3 class="box-title"><?= Html::encode($this->title) ?></h3>
@@ -19,8 +19,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="box-body">
 
             <p>
-                <?= Html::a('Actualizar', ['update', 'id' => $model->id_profesor], ['class' => 'btn btn-primary']) ?>
-                <?= Html::a('Eliminar', ['delete', 'id' => $model->id_profesor], [
+                <?= Html::a('Actualizar', ['update', 'id' => $model->id_coordinador], ['class' => 'btn btn-primary']) ?>
+                <?= Html::a('Eliminar', ['delete', 'id' => $model->id_coordinador], [
                     'class' => 'btn btn-danger',
                     'data' => [
                         'confirm' => 'Está seguro de eliminar este registro?',
@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
              <?= DetailView::widget([
                 'model' => $model,
                 'attributes' => [
-                    'id_profesor',
+                    'id_coordinador',
                     'nombre',
                     'apellido_paterno',
                     'apellido_materno',
@@ -56,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <?php
                 if(strlen($model->doc_acta_nacimiento) > 0){
-                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_acta_nacimiento;
+                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_coordinador."/".$model->doc_acta_nacimiento;
                     echo '
                     <div class="col-sm-3">
                         <center><h4 style="color:brown"> Acta de Nacimiento </h4></center>
@@ -65,7 +65,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ';
                 }
                 if(strlen($model->doc_curp) > 0){
-                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_curp;
+                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_coordinador."/".$model->doc_curp;
                     echo '
                      <div class="col-sm-1"></div>
                     <div class="col-sm-3">
@@ -75,7 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ';
                 }
                 if(strlen($model->doc_ine) > 0){
-                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_ine;
+                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_coordinador."/".$model->doc_ine;
                     echo '
                     <div class="col-sm-1"></div>
                     <div class="col-sm-3">
@@ -85,7 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ';
                 }
                 if(strlen($model->doc_rfc) > 0){
-                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_rfc;
+                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_coordinador."/".$model->doc_rfc;
                     echo '
                     <div class="col-sm-1"></div>
                     <div class="col-sm-3">
@@ -95,7 +95,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ';
                 }
                 if(strlen($model->doc_nss) > 0){
-                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_nss;
+                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_coordinador."/".$model->doc_nss;
                     echo '
                     <div class="col-sm-1"></div>
                     <div class="col-sm-3">
@@ -105,7 +105,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ';
                 }
                 if(strlen($model->doc_cedula) > 0){
-                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_cedula;
+                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_coordinador."/".$model->doc_cedula;
                     echo '
                     <div class="col-sm-1"></div>
                     <div class="col-sm-3">
@@ -115,7 +115,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ';
                 }
                 if(strlen($model->doc_titulo) > 0){
-                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_titulo;
+                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_coordinador."/".$model->doc_titulo;
                     echo '
                     <div class="col-sm-1"></div>
                     <div class="col-sm-3">
@@ -125,7 +125,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ';
                 }
                 if(strlen($model->doc_curriculum) > 0){
-                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_curriculum;
+                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_coordinador."/".$model->doc_curriculum;
                     echo '
                     <div class="col-sm-1"></div>
                     <div class="col-sm-3">
@@ -135,7 +135,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ';
                 }
                 if(strlen($model->doc_comp_domicilio) > 0){
-                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_profesor."/".$model->doc_comp_domicilio;
+                    $ruta = "https://controlescolar.universidadcidae.com.mx/docs_docentes/".$model->id_coordinador."/".$model->doc_comp_domicilio;
                     echo '
                     <div class="col-sm-1"></div>
                     <div class="col-sm-3">
