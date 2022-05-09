@@ -107,10 +107,18 @@ $this->registerJs("
                 </div>
             </div>
            
-             <div class="row">
+            <div class="row">
                 <div class="col-xs-12">
                     <div class="col-sm-4">
                         <?= $form->field($model, 'total_creditos')->textInput(['maxlength' => true]) ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'file_temario')->fileInput()->label("Carrgar Temario de Materia"); ?>
                     </div>
                 </div>
             </div>

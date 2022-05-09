@@ -74,7 +74,7 @@ class Avisos extends \yii\db\ActiveRecord
 
     public function uploadFiles() {
         if(!is_null($this->file_aviso)){
-            $path_aviso = $this->uploadPath() ."/aviso_". $this->nombre . "." .$this->file_aviso->extension;
+            $path_aviso = $this->uploadPath() ."aviso_". $this->nombre . "." .$this->file_aviso->extension;
             $this->file_aviso->saveAs($path_aviso, false);
             $this->ruta_aviso = "/avisos/aviso_".$this->nombre . "." .$this->file_aviso->extension;
         }

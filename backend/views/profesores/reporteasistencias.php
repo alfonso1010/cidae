@@ -62,7 +62,9 @@ $this->registerCss('
         background:#ced66b;
     }
 ');
-
+function hola(){
+    return "hola";
+}
 ?>
 
 <div class="box box-primary">
@@ -85,11 +87,37 @@ $this->registerCss('
                     'bloque',
                     [
                         'class'    => 'yii\grid\ActionColumn',
-                        'template' => '{acciones} ',
+                        'template' => '{acciones}',
                         'buttons'  => [
                             'acciones' => function ($url, $model) {
                                 return '<center><button  onclick="cargaHorario('.$model->id_asistencia_alumno.');" class="btn btn-success" >Ver Asistencias</button></center>';
-                            },
+                            }
+                        ],
+                    ],
+                    [
+                        'class'    => 'yii\grid\ActionColumn',
+                        'header' => "Editar",
+                        'template' => '{editar}',
+                        'buttons'  => [
+                            'editar' => function ($url, $model){
+                                $fecha_actual = date("Y-m-d");
+                                $fechaInicial = $model->fecha_asistencia; 
+                                $fecha_final = $fechaInicial;
+                                $MaxDias = 3; 
+                                for ($i=0; $i<$MaxDias; $i++){  
+                                    //valida si es sabado o domingo
+                                    $dia_siguiente = date("N",strtotime($fecha_final."+ 1 days"));
+                                    if($dia_siguiente != 6 && $dia_siguiente != 7 ){
+                                        $fecha_final = date("Y-m-d",strtotime($fecha_final."+ 1 days"));
+                                    }else{
+                                        $fecha_final = date("Y-m-d",strtotime($fecha_final."+ 1 days"));
+                                        $i--;
+                                    }
+                                } 
+                                if($fecha_actual <= $fecha_final){
+                                    return '<center><button  onclick="editaHorario('.$model->id_asistencia_alumno.');" class="btn btn-success" >Editar Asistencia</button></center>';
+                                }
+                            }
                         ],
                     ],
                 ],

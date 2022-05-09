@@ -12,6 +12,8 @@ use common\models\Grupos;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 use yii\web\UploadedFile;
+use common\models\Materias;
+use common\models\MateriasSearch;
 
 /**
  * CoordinadorController implements the CRUD actions for Coordinador model.
@@ -205,6 +207,28 @@ class CoordinadorController extends Controller
         return $this->render('update', [
             'model' => $model,
             'grupos' => $grupos,
+        ]);
+    }
+
+     public function actionTemario(){
+      $id_coordinador = Yii::$app->user->identity->id_responsable;
+      $busca_cordi = Coordinador::findOne($id_coordinador);
+      if(is_null($busca_cordi)){
+          Yii::$app->user->logout();
+          return $this->goHome();
+      }
+      $carreras_cordi = Grupos::find()->select('id_carrera')->where('id_grupo IN ('.$busca_cordi->grupos.')')->groupBy(['id_carrera'])->asArray()->all();
+      $in_carreas = "";
+      foreach ($carreras_cordi as $key => $carrera) {
+          $in_carreas .= $carrera['id_carrera'].",";
+      }
+      $in_carreas = trim($in_carreas, ",");
+      $searchModel = new MateriasSearch();
+      $dataProvider = $searchModel->searchCoordinador(Yii::$app->request->queryParams,$in_carreas);
+
+        return $this->render('temario', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 

@@ -20,6 +20,8 @@ use yii\web\NotFoundHttpException;
 use common\models\ProfesorMateria;
 use common\models\BibliotecaDigital;
 use common\models\BibliotecaDigitalSearch;
+use common\models\FormatoAlumnos;
+use common\models\FormatoAlumnosSearch;
 use common\models\AvisosSearch;
 use common\models\CalificacionAlumno;
 use common\models\HorariosProfesorMateria;
@@ -50,6 +52,22 @@ class AlumnoController extends Controller
       ];
 
       return $behaviors;
+    }
+
+
+    /**
+     * Lists all FormatoAlumnos models.
+     * @return mixed
+     */
+    public function actionFormatos()
+    {
+        $searchModel = new FormatoAlumnosSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('formatos', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
 

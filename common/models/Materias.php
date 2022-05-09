@@ -24,6 +24,10 @@ use yii\db\Expression;
  */
 class Materias extends \yii\db\ActiveRecord
 {
+
+    public $file_temario;
+
+
     /**
      * {@inheritdoc}
      */
@@ -53,11 +57,13 @@ class Materias extends \yii\db\ActiveRecord
         return [
             [['nombre', 'periodo', 'mes_periodo', 'id_carrera'], 'required'],
             [['periodo', 'id_carrera', 'activo'], 'integer'],
-            [['fecha_alta','mes_periodo'], 'safe'],
+            [['fecha_alta','mes_periodo','temario'], 'safe'],
             [['nombre'], 'string', 'max' => 255],
             [['clave'], 'string', 'max' => 100],
             [['total_creditos'], 'string', 'max' => 45],
             [['id_carrera'], 'exist', 'skipOnError' => true, 'targetClass' => Carreras::className(), 'targetAttribute' => ['id_carrera' => 'id_carrera']],
+            [['file_temario'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, pdf'],
+            
         ];
     }
 
@@ -78,6 +84,25 @@ class Materias extends \yii\db\ActiveRecord
             'activo' => 'Activo',
         ];
     }
+
+    public function uploadPath() {
+       
+        $path = \Yii::getAlias('@webroot')."/temarios/";
+        if(!file_exists($path)){
+            mkdir($path,0777);
+        }
+        return $path;
+    }
+
+    public function uploadFiles() {
+        if(!is_null($this->file_temario)){
+            $path_temario = $this->uploadPath(). $this->nombre . "." .$this->file_temario->extension;
+            $this->file_temario->saveAs($path_temario, false);
+            $this->temario = "/temarios/".$this->nombre . "." .$this->file_temario->extension;
+        }
+        
+        return true;
+    }   
 
     /**
      * Gets query for [[Carrera]].

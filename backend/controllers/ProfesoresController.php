@@ -11,6 +11,8 @@ use common\models\CalificacionAlumno;
 use common\models\HorariosProfesorMateria;
 use common\models\Carreras;
 use common\models\Alumnos;
+use common\models\FormatoDocentes;
+use common\models\FormatoDocentesSearch;
 use common\models\Grupos;
 use common\models\HorariosProfesorMateriaSearch;
 use common\models\AsistenciaAlumnoSearch;
@@ -46,6 +48,21 @@ class ProfesoresController extends Controller
       ];
 
       return $behaviors;
+    }
+
+    /**
+     * Lists all FormatoAlumnos models.
+     * @return mixed
+     */
+    public function actionFormatos()
+    {
+        $searchModel = new FormatoDocentesSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('formatos', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**
@@ -1038,6 +1055,17 @@ class ProfesoresController extends Controller
       
       return json_encode($data);
         
+    }
+
+    public function actionTemario(){
+      $id_profesor = Yii::$app->user->identity->id_responsable;
+      $searchModel = new HorariosProfesorMateriaSearch();
+      $dataProvider = $searchModel->searchGruposProfesor(Yii::$app->request->queryParams,$id_profesor);
+
+        return $this->render('temario', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
 

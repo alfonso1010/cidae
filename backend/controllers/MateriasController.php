@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Carreras;
 use yii\helpers\ArrayHelper;
+use yii\web\UploadedFile;
 
 /**
  * MateriasController implements the CRUD actions for Materias model.
@@ -89,6 +90,8 @@ class MateriasController extends Controller
             }
             $model->mes_periodo = trim($meses,",");
         }
+        $model->file_temario = UploadedFile::getInstance($model, 'file_temario');
+        $model->uploadFiles();
         if ( $model->save()) {
             return $this->redirect(['view', 'id_materia' => $model->id_materia, 'id_carrera' => $model->id_carrera]);
         }
@@ -109,24 +112,26 @@ class MateriasController extends Controller
      */
     public function actionUpdate($id_materia, $id_carrera)
     {
+        $request = Yii::$app->request;
         $model = $this->findModel($id_materia, $id_carrera);
 
         $lista_carreras = Carreras::find()->where(['activo' => 0])->all();
         $carreras = ArrayHelper::map($lista_carreras, 'id_carrera', 'nombre');
-
-        $model->load(Yii::$app->request->post());
-        if(is_array($model->mes_periodo) && !empty($model->mes_periodo)){
-            $meses = "";
-            foreach ($model->mes_periodo as $key => $mes) {
-                $meses .= $mes.",";
+        if ($request->isPost){
+            $model->load(Yii::$app->request->post());
+            if(is_array($model->mes_periodo) && !empty($model->mes_periodo)){
+                $meses = "";
+                foreach ($model->mes_periodo as $key => $mes) {
+                    $meses .= $mes.",";
+                }
+                $model->mes_periodo = trim($meses,",");
             }
-            $model->mes_periodo = trim($meses,",");
+            $model->file_temario = UploadedFile::getInstance($model, 'file_temario');
+            $model->uploadFiles();
+            if ($model->save()) {
+                return $this->redirect(['view', 'id_materia' => $model->id_materia, 'id_carrera' => $model->id_carrera]);
+            }
         }
-
-        if ($model->save()) {
-            return $this->redirect(['view', 'id_materia' => $model->id_materia, 'id_carrera' => $model->id_carrera]);
-        }
-
         return $this->render('update', [
             'model' => $model,
             'carreras' => $carreras

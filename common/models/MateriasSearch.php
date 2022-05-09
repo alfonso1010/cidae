@@ -75,4 +75,49 @@ class MateriasSearch extends Materias
 
         return $dataProvider;
     }
+
+     /**
+     * Creates data provider instance with search query applied
+     *
+     * @param array $params
+     *
+     * @return ActiveDataProvider
+     */
+    public function searchCoordinador($params,$carreras)
+    {
+        $query = Materias::find()->where('id_carrera IN ('.$carreras.')');
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+        //print_r($params);die();
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'id_materia' => $this->id_materia,
+            'periodo' => $this->periodo,
+            'mes_periodo' => $this->mes_periodo,
+            'id_carrera' => $this->id_carrera,
+            'fecha_alta' => $this->fecha_alta,
+            'activo' => $this->activo,
+        ]);
+
+        $query->andFilterWhere(['like', 'nombre', $this->nombre])
+            ->andFilterWhere(['like', 'clave', $this->clave])
+            ->andFilterWhere(['like', 'total_creditos', $this->total_creditos]);
+        //print_r($query->createCommand()->getRawSql());die();
+
+        return $dataProvider;
+    }
 }

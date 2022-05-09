@@ -25,7 +25,7 @@ $ruta = "https://controlescolar.universidadcidae.com.mx";
 $this->registerJs('
     
   function verComprobante(ruta){
-    $("#comp_img").html(\'<center><embed src="'.$ruta.'\'+ruta+\'" width="500" height="500"></center>\');
+    $("#comp_img").html(\'<center><embed style="width: 100%;max-width: 100%;height:400px;max-height: 100%;" src="'.$ruta.'\'+ruta+\'" ></center>\');
     $("#myModal").modal("show");
 
   }
@@ -115,7 +115,7 @@ $this->registerJs('
 
 <!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
 
     <!-- Modal content-->
     <div class="modal-content">
