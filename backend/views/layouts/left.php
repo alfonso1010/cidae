@@ -12,7 +12,7 @@ $roles_usuario = \Yii::$app->authManager->getRolesByUser(
 $roles_usuario =  reset($roles_usuario);
 $rol = ArrayHelper::getValue($roles_usuario, 'name', '');
 if($rol == "admin"){
-    //unset($menu[9]);
+    unset($menu[9]);
 }
 ?>
 <aside class="main-sidebar">

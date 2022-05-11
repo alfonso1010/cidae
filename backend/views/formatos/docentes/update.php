@@ -5,10 +5,10 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\FormatoAlumnos */
 
-$this->title = 'Update Formato Alumnos: ' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Formato Alumnos', 'url' => ['index']];
+$this->title = 'Actualizar Formato Docentes: ' . $model->id;
+$this->params['breadcrumbs'][] = ['label' => 'Formato Docentes', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'Actualizar';
 ?>
 <div class="formato-alumnos-update">
 
