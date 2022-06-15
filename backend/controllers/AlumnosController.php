@@ -110,7 +110,7 @@ class AlumnosController extends Controller
     public function actionCreate()
     {
         $model = new Alumnos();
-
+        $model->activo = 0;
         $lista_grupos = Grupos::find()->where(['activo' => 0])->all();
         $grupos = ArrayHelper::map($lista_grupos, 'id_grupo', 'nombre');
 
