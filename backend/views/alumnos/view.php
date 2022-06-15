@@ -33,6 +33,14 @@ $this->params['breadcrumbs'][] = $this->title;
               <?= DetailView::widget([
                     'model' => $model,
                     'attributes' => [
+                        [
+                            'format' => 'html',
+                            'attribute' => 'activo',
+                            'label' => 'Estatus Alumno',
+                            'value' => function($model){
+                                return $model->estatus;
+                            }
+                        ],
                         'id_alumno',
                         [
                             'attribute' => 'id_grupo',

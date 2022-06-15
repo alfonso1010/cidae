@@ -78,7 +78,7 @@ class AlumnoController extends Controller
     public function actionPrincipal()
     {
         $id_alumno = Yii::$app->user->identity->id_responsable;
-        $busca_alumno = Alumnos::findOne($id_alumno);
+        $busca_alumno = Alumnos::findOne(['id_alumno' => $id_alumno, 'activo' => 0]);
         if(is_null($busca_alumno)){
             Yii::$app->user->logout();
             return $this->goHome();

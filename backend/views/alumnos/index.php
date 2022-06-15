@@ -48,6 +48,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     'telefono_celular',
                     //'sexo',
                     'email:email',
+                    [
+                        'attribute' => 'activo',
+                        'label' => 'Estatus',
+                        'format' => 'html',
+                        'value' => function($model){
+                            
+                            return $model->estatus;
+                        }
+                    ],
                     'fecha_ingreso',
                     //'fecha_alta',
                     //'activo',

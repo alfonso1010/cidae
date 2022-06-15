@@ -7,6 +7,11 @@ use kartik\widgets\Select2;
 /* @var $this yii\web\View */
 /* @var $model common\models\Alumnos */
 /* @var $form yii\widgets\ActiveForm */
+
+$estatus = [ 0 => 'ACTIVO', 1 => 'BAJA',  2 => 'EGRESADO', 3 => "TITULADO"];
+
+
+
 ?>
 
 <div class="alumnos-form">
@@ -19,7 +24,15 @@ use kartik\widgets\Select2;
                 $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); 
                 echo $form->errorSummary($model);
             ?>
-
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="col-sm-8"></div>
+                    <div class="col-sm-4">
+                        <?= $form->field($model, 'activo')->dropDownList($estatus, ['prompt' => 'Seleccione Uno' ])->label("Seleccione Estatus"); ?>
+                        
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-xs-12">
                     <div class="col-sm-4">

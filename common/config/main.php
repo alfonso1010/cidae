@@ -31,7 +31,7 @@ return [
             //comment the following array to send mail using php's mail function
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
-                'host' => 'mail.universidadcidae.com.mx',
+                'host' => 'universidadcidae.com.mx',
                 'username' => 'errores@universidadcidae.com.mx',
                 'password' => '7h8j9k0l',
                 'port' => '26',

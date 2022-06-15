@@ -32,6 +32,12 @@ use yii\helpers\Url;
  */
 class Alumnos extends \yii\db\ActiveRecord
 {
+
+    const ACTIVO = 0;
+    const BAJA = 1;
+    const EGRESADO = 2;
+    const TITULADO = 3;
+
     public $file_acta;
     public $file_curp;
     public $file_ine;
@@ -43,6 +49,25 @@ class Alumnos extends \yii\db\ActiveRecord
     public static function tableName()
     {
         return 'alumnos';
+    }
+
+    public function getEstatus(){
+        $tx_estatus = "";
+        switch ($this->activo) {
+            case self::ACTIVO:
+                $tx_estatus = "<p style='color:green'>ACTIVO</p>";
+                break;
+            case self::BAJA:
+                $tx_estatus = "<p style='color:red'>BAJA</p>";
+                break;
+            case self::EGRESADO:
+                $tx_estatus = "<p style='color:orange'>EGRESADO</p>";
+                break;
+            case self::TITULADO:
+                $tx_estatus = "<p style='color:blue'>TITULADO</p>";
+                break;
+        }
+        return $tx_estatus;
     }
 
     public function behaviors()
