@@ -412,6 +412,7 @@ class ProfesoresController extends Controller
       }
 
       $semestre_bloque = \common\helpers\UtilidadesHelper::calculaSemestreBloque($busca_grupo);
+      //print_r($datos);die();
       if(is_null($semestre_bloque)){
         $data = [
           "code" => 422,
@@ -468,12 +469,6 @@ class ProfesoresController extends Controller
               $inserta_calificacion->save(false);
               
             }
-          }else{
-            $data = [
-              "code" => 422,
-              "mensaje" => "Ocurrió un error al guardar las calificaciones, por favor contacte con el administrador.",
-            ];
-            return json_encode($data);
           }
         }
         $data = [

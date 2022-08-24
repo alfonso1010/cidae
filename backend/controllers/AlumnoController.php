@@ -230,6 +230,96 @@ class AlumnoController extends Controller
        
     }
 
+     /**
+     * Lists all Alumnos models.
+     * @return mixed
+     */
+    public function actionCargaCalificaciones()
+    {
+        $datos = Yii::$app->request->post();
+        $id_alumno = Yii::$app->user->identity->id_responsable;
+        $busca_alumno = Alumnos::findOne($id_alumno);
+        $semestre = ArrayHelper::getValue($datos, 'semestre', 0);
+        $id_grupo = ArrayHelper::getValue($datos, 'id_grupo', 0);
+        $bloque = ArrayHelper::getValue($datos, 'bloque', 0);
+        $data = [
+            "code" => 201,
+            "tabla" => ""
+        ];
+        if($semestre > 0 && $id_grupo > 0 && $bloque > 0 ){
+            $busca_materias = HorariosProfesorMateria::find()
+            ->select(['horarios_profesor_materia.id_materia','materias.nombre as nombre_materia'])
+            ->innerJoin( 'materias','horarios_profesor_materia.id_materia = materias.id_materia')
+            ->where([
+                'horarios_profesor_materia.id_grupo' => $id_grupo,
+                'horarios_profesor_materia.semestre' => $semestre,
+                'horarios_profesor_materia.bloque' => $bloque,
+            ])
+            ->groupBy(['horarios_profesor_materia.id_materia'])
+            ->asArray()->all();
+            $tabla = '
+            <table class="table">
+                <tbody>
+                    <tr >
+                        <th style="border:1px solid #252525;color:#092F87"><center>Materia</center></th>
+                        <th style="border:1px solid #252525;color:#092F87"><center>Cal. Primer Parcial</center></th>
+                        <th style="border:1px solid #252525;color:#092F87"><center>Cal. Segundo Parcial</center></th>
+                        <th style="border:1px solid #252525;color:#092F87"><center>Promedio</center></th>
+                    </tr>';
+
+            foreach ($busca_materias as $key => $materia) {
+                $busca_primer_calificacion_alumno = CalificacionAlumno::findOne([
+                  'id_alumno' => $busca_alumno->id_alumno,
+                  'id_grupo' => $busca_alumno->id_grupo,
+                  'semestre' => $semestre,
+                  'bloque' => $bloque,
+                  'no_evaluacion' => 1,
+                  'id_materia' => $materia['id_materia'],
+                ]);
+
+                $busca_segunda_calificacion_alumno = CalificacionAlumno::findOne([
+                  'id_alumno' => $busca_alumno->id_alumno,
+                  'id_grupo' => $busca_alumno->id_grupo,
+                  'semestre' => $semestre,
+                  'bloque' => $bloque,
+                  'no_evaluacion' => 2,
+                  'id_materia' => $materia['id_materia'],
+                ]);
+                $promedio = "-";
+                if(!is_null($busca_primer_calificacion_alumno) && !is_null($busca_segunda_calificacion_alumno)){
+                    $promedio = ($busca_primer_calificacion_alumno->calificacion+$busca_segunda_calificacion_alumno->calificacion)/2;
+                    $promedio = floor($promedio);
+                    $promedio = number_format($promedio, 2, '.', '');
+                }
+                $background = (is_numeric($promedio) && $promedio < 7)?"#F76969":"white";
+                $tabla .= 
+                "<tr style='background:".$background."'>
+                    <td  style='border:1px solid #252525;width:200px;'> 
+                      <b style='color: #252525;' >".$materia['nombre_materia']."</b>
+                    </td>
+                    <td  style='border:1px solid #252525;width:50px;'> 
+                       <center>".ArrayHelper::getValue($busca_primer_calificacion_alumno, 'calificacion', "-")."</center>
+                    </td>
+                    <td  style='border:1px solid #252525;width:50px;'> 
+                       <center>".ArrayHelper::getValue($busca_segunda_calificacion_alumno, 'calificacion', "-")."</center>
+                    </td>
+                    <td  style='border:1px solid #252525;width:50px;'> 
+                       <center><p> ".$promedio."</p></center>
+                    </td>
+                </tr>";
+            }
+            $tabla .= "
+                </tbody>
+            </table>";
+            $data = [
+                "code" => 200,
+                "tabla" => $tabla,
+                "mensaje" => "Éxito",
+            ];
+        }
+        return json_encode($data);
+    }
+
 
 
    

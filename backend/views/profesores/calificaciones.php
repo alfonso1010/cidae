@@ -67,63 +67,77 @@ $this->registerJs('
         });
     }
 
-    function guardarCalificacion(){
+   function guardarCalificacion(){
         var data_envio = [];
         var id_grupo = $("#id_grupo").val();
         var id_materia = $("#id_materia").val();
+        var error = false;
         $("input").each(function() {
             if($(this).attr("id") != undefined && $(this).prop("disabled") == false){
+                if($(this).val() > 10){
+                    error = true;
+                }
                 data_envio.push({
                     "id_alumno":$(this).attr("id"),
                     "calificacion":$(this).val(),
                 });
             }
         });
-        $.ajax({
-            type:"POST", 
-            async:false,
-            url:"'.$url_guarda.'",
-            data:{
-                "id_grupo": id_grupo, 
-                "id_materia": id_materia,  
-                "calificaciones":data_envio 
-            },
-            success:function(data){ 
-                try{
-                    if(data.code == 200 ){
+        if(!error){
+            $.ajax({
+                type:"POST", 
+                async:false,
+                url:"'.$url_guarda.'",
+                data:{
+                    "id_grupo": id_grupo, 
+                    "id_materia": id_materia,  
+                    "calificaciones":data_envio 
+                },
+                success:function(data){ 
+                    try{
+                        if(data.code == 200 ){
+                            alertify.alert()
+                            .setting({
+                                "label":"Cerrar",
+                                "message":"<h3 style=\'color:green\' ><b>Éxito.</b></h3><h4>La calificación de los alumnos, se ha guardado correctamente</h4>",
+                                "onok": function(){ location.reload();}
+                            }).show();
+                        }else if(data.code == 422 ){
+                            alertify.alert()
+                            .setting({
+                                "label":"Cerrar",
+                                 "message":"<h3 style=\'color:red\' ><b>Lo sentimos..</b></h3><h4>"+data.mensaje+"</h4>",
+                            }).show();
+                        }
+                    }catch(e){
                         alertify.alert()
                         .setting({
                             "label":"Cerrar",
-                            "message":"<h3 style=\'color:green\' ><b>Éxito.</b></h3><h4>La calificación de los alumnos, se ha guardado correctamente</h4>",
-                            "onok": function(){ location.reload();}
-                        }).show();
-                    }else if(data.code == 422 ){
-                        alertify.alert()
-                        .setting({
-                            "label":"Cerrar",
-                             "message":"<h3 style=\'color:red\' ><b>Lo sentimos..</b></h3><h4>"+data.mensaje+"</h4>",
+                             "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor, por favor contacte al administrador</h4>",
+                                "onok": function(){ location.reload();}
                         }).show();
                     }
-                }catch(e){
+                },
+                error: function(){
                     alertify.alert()
                     .setting({
                         "label":"Cerrar",
-                         "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor, por favor contacte al administrador</h4>",
+                         "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor,por favor contacte al administrador</h4>",
                             "onok": function(){ location.reload();}
                     }).show();
-                }
-            },
-            error: function(){
-                alertify.alert()
-                .setting({
-                    "label":"Cerrar",
-                     "message":"<h3 style=\'color:red\' ><b>Error</b></h3><h4>Ocurrió un error con el servidor,por favor contacte al administrador</h4>",
-                        "onok": function(){ location.reload();}
-                }).show();
-            },
-            dataType: "json",
-        });
-        console.log(data_envio);
+                },
+                dataType: "json",
+            });
+            console.log(data_envio);
+        }else{
+            console.log("error");
+            alertify.alert()
+            .setting({
+                "label":"Cerrar",
+                 "message":"<h3 style=\'color:red\' ><b>Lo sentimos..</b></h3><h4>El valor de la calificación no puede ser mayor a 10. </h4>",
+            }).show();
+        }
+        
     }   
 
     function confirmarRegistro(no_evaluacion){
