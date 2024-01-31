@@ -27,7 +27,7 @@ $fieldOptions2 = [
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body" style="border:1px solid #092F87; border-radius: 15px;box-shadow: 0px 10px 10px -6px black;">
-        <p class="login-box-msg"  style="font-size: 25px;color: #252525">Iniciar<b style="color:#a5b200"> Sesión</b></p>
+        <p class="login-box-msg"  style="font-size: 25px;color: #252525"> Iniciar <b style="color:#a5b200"> Sesión</b></p>
 
         <?php $form = ActiveForm::begin(['id' => 'login-form', 'enableClientValidation' => false]); ?>
         <label style="color: #092F87">Email</label>
